@@ -10,19 +10,14 @@ all: clean test fmt lint vet megacheck build proto cover
 build:
 	go build ${GO_LDFLAGS} -o ${NAME}
 
-.PHONY: proto
-	@ if ! which protoc > /dev/null; then \
-		echo "error: protoc not installed" >&2; \
-		exit 1; \
-	fi
-	go get -u -v github.com/golang/protobuf/protoc-gen-go
-	for file in $$(git ls-files '*.proto'); do \
-		protoc -I $$(dirname $$file) --go_out=plugins=grpc:$$(dirname $$file) $$file; \
-	done
+
+proto:
+	mkdir pkg/${NAME}event | tee /dev/null
+	protoc -I. ${NAME}event.proto --go_out=plugins=grpc:pkg/${NAME}event
 
 .PHONY: clean
 clean:
-	rm -v ${NAME} | tee /dev/stderr ; rm -v coverage.txt | tee /dev/stderr
+	rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v ${NAME} | tee /dev/stderr ; rm -v coverage.txt | tee /dev/stderr
 
 .PHONY: test
 test:
