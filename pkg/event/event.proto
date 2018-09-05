@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.grpc.examples.event";
+option java_outer_classname = "styx";
+
+package event;
+
+message SearchFile {
+    string filename = 1;
+    //string directory = 2;
+}
+
+message FoundFile {
+    string match = 1;
+    string regmatch = 2;
+}
