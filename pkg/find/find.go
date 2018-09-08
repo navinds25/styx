@@ -1,22 +1,13 @@
-package main
+package find
 
 import (
 	"regexp"
 
 	"github.com/kr/fs"
-	log "github.com/sirupsen/logrus"
 )
 
-func main() {
-	dM, rM, err := findFile("list_of_files")
-	if err != nil {
-		log.Error(err)
-	}
-	log.Println("Directly matched files:", dM)
-	log.Println("Regex Matched files:", rM)
-}
-
-func findFile(filename string) ([]string, []string, error) {
+// File is used for finding a file.
+func File(filename string) ([]string, []string, error) {
 	r, err := regexp.Compile(filename)
 	if err != nil {
 		return nil, nil, err

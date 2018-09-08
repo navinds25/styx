@@ -1,17 +1,32 @@
 syntax = "proto3";
 
 option java_multiple_files = true;
-option java_package = "io.grpc.examples.event";
-option java_outer_classname = "styx";
+option java_package = "io.grpc.examples.styxevent";
+option java_outer_classname = "styxevent";
 
-package event;
+package styxevent;
 
-message SearchFile {
-    string filename = 1;
-    //string directory = 2;
+service FileHandling {
+    rpc FileSearch (SearchFileInfo) returns (FoundFile);
+    rpc FileSearchStream(stream SearchFileInfo) returns (stream FoundFile);
+}
+
+message Ack {
+    string message = 1;
+}
+
+message SearchFileInfo {
+    string jid = 1;
+    string type = 2;
+    string filename = 3;
+    string directory = 4;
+    string server = 5;
 }
 
 message FoundFile {
-    string match = 1;
-    string regmatch = 2;
+    string jid = 1;
+    string type = 2;
+    string match = 3;
+    string regmatch = 4;
+    string error = 5;
 }

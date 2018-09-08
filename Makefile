@@ -1,10 +1,10 @@
 COMMIT=$(shell git rev-parse --short HEAD)
 DATE=$(shell date +%F)
 BUILD=$(shell echo "${BUILDNUMBER}")
-NAME="styx"
+NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
-all: clean test fmt lint vet megacheck build proto cover
+all: clean proto test fmt lint vet megacheck build cover
 
 .PHONY: build
 build:
@@ -12,7 +12,8 @@ build:
 
 
 proto:
-	mkdir pkg/${NAME}event | tee /dev/null
+	rm -v pkg/styxevent/* && rmdir pkg/styxevent
+	mkdir pkg/styxevent
 	protoc -I. ${NAME}event.proto --go_out=plugins=grpc:pkg/${NAME}event
 
 .PHONY: clean
