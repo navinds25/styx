@@ -6,7 +6,7 @@ option java_outer_classname = "styxevent";
 
 package styxevent;
 
-service FileHandling {
+service Styx {
     rpc FileSearch (SearchFileInfo) returns (FoundFile);
     rpc FileSearchStream(stream SearchFileInfo) returns (stream FoundFile);
 }

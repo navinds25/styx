@@ -1,4 +1,4 @@
-package cmd
+package app
 
 import (
 	"github.com/navinds25/styx/pkg/sftpclient"

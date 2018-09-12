@@ -19,8 +19,8 @@ func main() {
 		log.Fatal("Did not connect ", err)
 	}
 	defer conn.Close()
-	c := pb.NewFileHandlingClient(conn)
-	clientDeadline := time.Now().Add(time.Duration(10000) * time.Millisecond)
+	c := pb.NewStyxClient(conn)
+	clientDeadline := time.Now().Add(time.Duration(1000000) * time.Millisecond)
 	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
 	defer cancel()

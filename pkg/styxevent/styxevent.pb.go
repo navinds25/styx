@@ -34,7 +34,7 @@ func (m *Ack) Reset()         { *m = Ack{} }
 func (m *Ack) String() string { return proto.CompactTextString(m) }
 func (*Ack) ProtoMessage()    {}
 func (*Ack) Descriptor() ([]byte, []int) {
-	return fileDescriptor_styxevent_afca33e29db050af, []int{0}
+	return fileDescriptor_styxevent_791364d58c4f47a5, []int{0}
 }
 func (m *Ack) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_Ack.Unmarshal(m, b)
@@ -76,7 +76,7 @@ func (m *SearchFileInfo) Reset()         { *m = SearchFileInfo{} }
 func (m *SearchFileInfo) String() string { return proto.CompactTextString(m) }
 func (*SearchFileInfo) ProtoMessage()    {}
 func (*SearchFileInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_styxevent_afca33e29db050af, []int{1}
+	return fileDescriptor_styxevent_791364d58c4f47a5, []int{1}
 }
 func (m *SearchFileInfo) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_SearchFileInfo.Unmarshal(m, b)
@@ -146,7 +146,7 @@ func (m *FoundFile) Reset()         { *m = FoundFile{} }
 func (m *FoundFile) String() string { return proto.CompactTextString(m) }
 func (*FoundFile) ProtoMessage()    {}
 func (*FoundFile) Descriptor() ([]byte, []int) {
-	return fileDescriptor_styxevent_afca33e29db050af, []int{2}
+	return fileDescriptor_styxevent_791364d58c4f47a5, []int{2}
 }
 func (m *FoundFile) XXX_Unmarshal(b []byte) error {
 	return xxx_messageInfo_FoundFile.Unmarshal(m, b)
@@ -215,55 +215,55 @@ var _ grpc.ClientConn
 // is compatible with the grpc package it is being compiled against.
 const _ = grpc.SupportPackageIsVersion4
 
-// FileHandlingClient is the client API for FileHandling service.
+// StyxClient is the client API for Styx service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
-type FileHandlingClient interface {
+type StyxClient interface {
 	FileSearch(ctx context.Context, in *SearchFileInfo, opts ...grpc.CallOption) (*FoundFile, error)
-	FileSearchStream(ctx context.Context, opts ...grpc.CallOption) (FileHandling_FileSearchStreamClient, error)
+	FileSearchStream(ctx context.Context, opts ...grpc.CallOption) (Styx_FileSearchStreamClient, error)
 }
 
-type fileHandlingClient struct {
+type styxClient struct {
 	cc *grpc.ClientConn
 }
 
-func NewFileHandlingClient(cc *grpc.ClientConn) FileHandlingClient {
-	return &fileHandlingClient{cc}
+func NewStyxClient(cc *grpc.ClientConn) StyxClient {
+	return &styxClient{cc}
 }
 
-func (c *fileHandlingClient) FileSearch(ctx context.Context, in *SearchFileInfo, opts ...grpc.CallOption) (*FoundFile, error) {
+func (c *styxClient) FileSearch(ctx context.Context, in *SearchFileInfo, opts ...grpc.CallOption) (*FoundFile, error) {
 	out := new(FoundFile)
-	err := c.cc.Invoke(ctx, "/styxevent.FileHandling/FileSearch", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/styxevent.Styx/FileSearch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *fileHandlingClient) FileSearchStream(ctx context.Context, opts ...grpc.CallOption) (FileHandling_FileSearchStreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &_FileHandling_serviceDesc.Streams[0], "/styxevent.FileHandling/FileSearchStream", opts...)
+func (c *styxClient) FileSearchStream(ctx context.Context, opts ...grpc.CallOption) (Styx_FileSearchStreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &_Styx_serviceDesc.Streams[0], "/styxevent.Styx/FileSearchStream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &fileHandlingFileSearchStreamClient{stream}
+	x := &styxFileSearchStreamClient{stream}
 	return x, nil
 }
 
-type FileHandling_FileSearchStreamClient interface {
+type Styx_FileSearchStreamClient interface {
 	Send(*SearchFileInfo) error
 	Recv() (*FoundFile, error)
 	grpc.ClientStream
 }
 
-type fileHandlingFileSearchStreamClient struct {
+type styxFileSearchStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *fileHandlingFileSearchStreamClient) Send(m *SearchFileInfo) error {
+func (x *styxFileSearchStreamClient) Send(m *SearchFileInfo) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *fileHandlingFileSearchStreamClient) Recv() (*FoundFile, error) {
+func (x *styxFileSearchStreamClient) Recv() (*FoundFile, error) {
 	m := new(FoundFile)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -271,53 +271,53 @@ func (x *fileHandlingFileSearchStreamClient) Recv() (*FoundFile, error) {
 	return m, nil
 }
 
-// FileHandlingServer is the server API for FileHandling service.
-type FileHandlingServer interface {
+// StyxServer is the server API for Styx service.
+type StyxServer interface {
 	FileSearch(context.Context, *SearchFileInfo) (*FoundFile, error)
-	FileSearchStream(FileHandling_FileSearchStreamServer) error
+	FileSearchStream(Styx_FileSearchStreamServer) error
 }
 
-func RegisterFileHandlingServer(s *grpc.Server, srv FileHandlingServer) {
-	s.RegisterService(&_FileHandling_serviceDesc, srv)
+func RegisterStyxServer(s *grpc.Server, srv StyxServer) {
+	s.RegisterService(&_Styx_serviceDesc, srv)
 }
 
-func _FileHandling_FileSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Styx_FileSearch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(SearchFileInfo)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(FileHandlingServer).FileSearch(ctx, in)
+		return srv.(StyxServer).FileSearch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/styxevent.FileHandling/FileSearch",
+		FullMethod: "/styxevent.Styx/FileSearch",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(FileHandlingServer).FileSearch(ctx, req.(*SearchFileInfo))
+		return srv.(StyxServer).FileSearch(ctx, req.(*SearchFileInfo))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _FileHandling_FileSearchStream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(FileHandlingServer).FileSearchStream(&fileHandlingFileSearchStreamServer{stream})
+func _Styx_FileSearchStream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(StyxServer).FileSearchStream(&styxFileSearchStreamServer{stream})
 }
 
-type FileHandling_FileSearchStreamServer interface {
+type Styx_FileSearchStreamServer interface {
 	Send(*FoundFile) error
 	Recv() (*SearchFileInfo, error)
 	grpc.ServerStream
 }
 
-type fileHandlingFileSearchStreamServer struct {
+type styxFileSearchStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *fileHandlingFileSearchStreamServer) Send(m *FoundFile) error {
+func (x *styxFileSearchStreamServer) Send(m *FoundFile) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *fileHandlingFileSearchStreamServer) Recv() (*SearchFileInfo, error) {
+func (x *styxFileSearchStreamServer) Recv() (*SearchFileInfo, error) {
 	m := new(SearchFileInfo)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -325,19 +325,19 @@ func (x *fileHandlingFileSearchStreamServer) Recv() (*SearchFileInfo, error) {
 	return m, nil
 }
 
-var _FileHandling_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "styxevent.FileHandling",
-	HandlerType: (*FileHandlingServer)(nil),
+var _Styx_serviceDesc = grpc.ServiceDesc{
+	ServiceName: "styxevent.Styx",
+	HandlerType: (*StyxServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "FileSearch",
-			Handler:    _FileHandling_FileSearch_Handler,
+			Handler:    _Styx_FileSearch_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "FileSearchStream",
-			Handler:       _FileHandling_FileSearchStream_Handler,
+			Handler:       _Styx_FileSearchStream_Handler,
 			ServerStreams: true,
 			ClientStreams: true,
 		},
@@ -345,27 +345,26 @@ var _FileHandling_serviceDesc = grpc.ServiceDesc{
 	Metadata: "styxevent.proto",
 }
 
-func init() { proto.RegisterFile("styxevent.proto", fileDescriptor_styxevent_afca33e29db050af) }
+func init() { proto.RegisterFile("styxevent.proto", fileDescriptor_styxevent_791364d58c4f47a5) }
 
-var fileDescriptor_styxevent_afca33e29db050af = []byte{
-	// 290 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0x4f, 0x4e, 0xf3, 0x30,
-	0x10, 0xc5, 0xe5, 0xaf, 0x7f, 0x3e, 0x32, 0x42, 0x50, 0x59, 0x15, 0x32, 0x15, 0x12, 0x28, 0xab,
-	0xb2, 0x89, 0x10, 0xac, 0x59, 0xd0, 0x45, 0x81, 0x1d, 0xa2, 0x27, 0x30, 0xc9, 0x34, 0x35, 0x24,
-	0x76, 0x34, 0x31, 0x55, 0x73, 0x03, 0x4e, 0xc0, 0x79, 0x91, 0x9d, 0x34, 0x86, 0x1d, 0xec, 0xfc,
-	0x7b, 0x6f, 0xc6, 0xf3, 0x34, 0x03, 0xc7, 0xb5, 0x6d, 0x76, 0xb8, 0x45, 0x6d, 0x93, 0x8a, 0x8c,
-	0x35, 0x3c, 0xea, 0x85, 0xf8, 0x1c, 0x06, 0x77, 0xe9, 0x1b, 0x17, 0xf0, 0xbf, 0xc4, 0xba, 0x96,
-	0x39, 0x0a, 0x76, 0xc1, 0xe6, 0xd1, 0xf3, 0x1e, 0xe3, 0x0f, 0x06, 0x47, 0x2b, 0x94, 0x94, 0x6e,
-	0x96, 0xaa, 0xc0, 0x47, 0xbd, 0x36, 0x7c, 0x02, 0x83, 0x57, 0x95, 0x75, 0x85, 0xee, 0xc9, 0x39,
-	0x0c, 0x6d, 0x53, 0xa1, 0xf8, 0xe7, 0x25, 0xff, 0xe6, 0x33, 0x38, 0x58, 0xab, 0x02, 0xb5, 0x2c,
-	0x51, 0x0c, 0xbc, 0xde, 0x33, 0x3f, 0x83, 0x28, 0x53, 0x84, 0xa9, 0x35, 0xd4, 0x88, 0xa1, 0x37,
-	0x83, 0xc0, 0x4f, 0x60, 0x5c, 0x23, 0x6d, 0x91, 0xc4, 0xc8, 0x5b, 0x1d, 0xc5, 0x0d, 0x44, 0x4b,
-	0xf3, 0xae, 0x33, 0x17, 0xe4, 0x97, 0x21, 0xa6, 0x30, 0x2a, 0xa5, 0x4d, 0x37, 0x5d, 0x82, 0x16,
-	0x5c, 0x34, 0xc2, 0xbc, 0x35, 0xda, 0xe9, 0x3d, 0xbb, 0x0e, 0x24, 0x32, 0xfb, 0xd9, 0x2d, 0x5c,
-	0x7f, 0x32, 0x38, 0x74, 0x63, 0x1f, 0xa4, 0xce, 0x0a, 0xa5, 0x73, 0x7e, 0x0b, 0xe0, 0xb8, 0xdd,
-	0x0c, 0x3f, 0x4d, 0xc2, 0x8a, 0x7f, 0x2e, 0x6b, 0x36, 0xfd, 0x66, 0x85, 0xf4, 0xf7, 0x30, 0x09,
-	0xed, 0x2b, 0x4b, 0x28, 0xcb, 0x3f, 0x7f, 0x32, 0x67, 0x57, 0x6c, 0x71, 0x09, 0x33, 0x65, 0x92,
-	0x9c, 0xaa, 0x34, 0xc1, 0x9d, 0x2c, 0xab, 0x02, 0xeb, 0x50, 0xbb, 0x08, 0x87, 0x7e, 0x62, 0x2f,
-	0x63, 0x7f, 0xfc, 0x9b, 0xaf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x8d, 0xb5, 0x50, 0xba, 0x0f, 0x02,
-	0x00, 0x00,
+var fileDescriptor_styxevent_791364d58c4f47a5 = []byte{
+	// 284 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x91, 0xc1, 0x4e, 0xbb, 0x40,
+	0x10, 0xc6, 0xb3, 0x7f, 0x68, 0xff, 0x32, 0x07, 0x6d, 0x36, 0x8d, 0x59, 0x89, 0x89, 0x86, 0x53,
+	0xbd, 0x10, 0xa3, 0x67, 0x0f, 0xf6, 0x50, 0xe3, 0xcd, 0xc8, 0x13, 0xac, 0x30, 0xa5, 0x28, 0xb0,
+	0x64, 0x58, 0x1b, 0x78, 0x03, 0x4f, 0x3e, 0xb3, 0x61, 0x97, 0xb2, 0x7a, 0xd3, 0xdb, 0xfe, 0xbe,
+	0x6f, 0x66, 0xe7, 0xcb, 0x0c, 0x9c, 0xb4, 0xba, 0xef, 0x70, 0x8f, 0xb5, 0x8e, 0x1b, 0x52, 0x5a,
+	0xf1, 0x60, 0x12, 0xa2, 0x0b, 0xf0, 0xee, 0xd3, 0x37, 0x2e, 0xe0, 0x7f, 0x85, 0x6d, 0x2b, 0x73,
+	0x14, 0xec, 0x92, 0xad, 0x82, 0xe7, 0x03, 0x46, 0x1f, 0x0c, 0x8e, 0x13, 0x94, 0x94, 0xee, 0x36,
+	0x45, 0x89, 0x8f, 0xf5, 0x56, 0xf1, 0x05, 0x78, 0xaf, 0x45, 0x36, 0x16, 0x0e, 0x4f, 0xce, 0xc1,
+	0xd7, 0x7d, 0x83, 0xe2, 0x9f, 0x91, 0xcc, 0x9b, 0x87, 0x70, 0xb4, 0x2d, 0x4a, 0xac, 0x65, 0x85,
+	0xc2, 0x33, 0xfa, 0xc4, 0xfc, 0x1c, 0x82, 0xac, 0x20, 0x4c, 0xb5, 0xa2, 0x5e, 0xf8, 0xc6, 0x74,
+	0x02, 0x3f, 0x85, 0x79, 0x8b, 0xb4, 0x47, 0x12, 0x33, 0x63, 0x8d, 0x14, 0xf5, 0x10, 0x6c, 0xd4,
+	0x7b, 0x9d, 0x0d, 0x41, 0x7e, 0x19, 0x62, 0x09, 0xb3, 0x4a, 0xea, 0x74, 0x37, 0x26, 0xb0, 0x30,
+	0x44, 0x23, 0xcc, 0xad, 0x61, 0xa7, 0x4f, 0x3c, 0x74, 0x20, 0x91, 0x3a, 0xcc, 0xb6, 0x70, 0xf3,
+	0xc9, 0xc0, 0x4f, 0x74, 0xdf, 0xf1, 0x3b, 0x80, 0x61, 0xbc, 0xdd, 0x08, 0x3f, 0x8b, 0xdd, 0x6a,
+	0x7f, 0x2e, 0x29, 0x5c, 0x7e, 0xb3, 0x5c, 0xea, 0x07, 0x58, 0xb8, 0xf6, 0x44, 0x13, 0xca, 0xea,
+	0xcf, 0x9f, 0xac, 0xd8, 0x35, 0x5b, 0x5f, 0x41, 0x58, 0xa8, 0x38, 0xa7, 0x26, 0x8d, 0xb1, 0x93,
+	0x55, 0x53, 0x62, 0xeb, 0x6a, 0xd7, 0xee, 0xc0, 0x4f, 0xec, 0x65, 0x6e, 0x8e, 0x7e, 0xfb, 0x15,
+	0x00, 0x00, 0xff, 0xff, 0xac, 0x66, 0x96, 0x87, 0x07, 0x02, 0x00, 0x00,
 }
