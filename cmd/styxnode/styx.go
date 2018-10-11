@@ -4,11 +4,9 @@ import (
 	"io"
 	"net"
 	"os"
-	"syscall"
 	"time"
 
 	"github.com/pkg/sftp"
-	"github.com/syossan27/tebata"
 	"golang.org/x/crypto/ssh"
 
 	"github.com/navinds25/styx/pkg/grpcdef"
@@ -34,10 +32,11 @@ func runGRPCServer(lis net.Listener, s *grpc.Server) error {
 	return nil
 }
 
-func listenSFTPServer(t *tebata.Tebata, lis net.Listener) error {
+//func listenSFTPServer(t *tebata.Tebata, lis net.Listener) error {
+func listenSFTPServer(lis net.Listener) error {
 	//t.Reserve(message)
 	for {
-		t.Reserve(lis.Close)
+		//t.Reserve(lis.Close)
 		nConn, err := lis.Accept()
 		if err != nil {
 			log.Error("Error from listenSFTPServer:", err)
@@ -122,7 +121,7 @@ func shutdown() {
 }
 
 func main() {
-	t := tebata.New(syscall.SIGINT, syscall.SIGTERM)
+	//t := tebata.New(syscall.SIGINT, syscall.SIGTERM)
 	grpclis, err := net.Listen("tcp", grpcport)
 	defer grpclis.Close()
 	sftplis, err := net.Listen("tcp", sftpport)
@@ -134,18 +133,19 @@ func main() {
 	// for grpc server
 	log.Infof("Listening for grpc on: %s ; sftp on %s", grpcport, sftpport)
 	s := grpc.NewServer()
-	t.Reserve(s.GracefulStop)
+	//t.Reserve(s.GracefulStop)
 	go func() {
 		if err := runGRPCServer(grpclis, s); err != nil {
 			log.Error(err)
 			os.Exit(1)
 		}
 	}()
-	t.Reserve(sftplis.Close)
-	t.Reserve(shutdown)
+	//t.Reserve(sftplis.Close)
+	//t.Reserve(shutdown)
 
 	// for sftp server
-	if err := listenSFTPServer(t, sftplis); err != nil {
+	//if err := listenSFTPServer(t, sftplis); err != nil {
+	if err := listenSFTPServer(sftplis); err != nil {
 		log.Error("Error from main", err)
 	}
 }

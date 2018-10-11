@@ -1,6 +1,5 @@
 Transfer Files to/from windows to linux servers using:
 sftp_client native
-Streaming transfers (examples) by the Legendary Dave Cheney:
 https://github.com/pkg/sftp/blob/master/examples/streaming-write-benchmark/main.go
 
 https://github.com/Redundancy/go-sync - Not production tested
