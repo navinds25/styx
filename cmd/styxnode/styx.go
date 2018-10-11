@@ -5,6 +5,7 @@ import (
 	"net"
 	"os"
 	"syscall"
+	"time"
 
 	"github.com/pkg/sftp"
 	"github.com/syossan27/tebata"
@@ -18,8 +19,8 @@ import (
 )
 
 const (
-	grpcport = ":50051"
-	sftpport = ":28888"
+	grpcport = "127.0.0.1:50051"
+	sftpport = "127.0.0.1:28888"
 )
 
 func runGRPCServer(lis net.Listener, s *grpc.Server) error {
@@ -33,11 +34,25 @@ func runGRPCServer(lis net.Listener, s *grpc.Server) error {
 	return nil
 }
 
-func runSFTPServer(t *tebata.Tebata, lis net.Listener) error {
+func listenSFTPServer(t *tebata.Tebata, lis net.Listener) error {
 	//t.Reserve(message)
-	nConn, err := lis.Accept()
+	for {
+		t.Reserve(lis.Close)
+		nConn, err := lis.Accept()
+		if err != nil {
+			log.Error("Error from listenSFTPServer:", err)
+			return (err)
+		}
+		go runSFTPServer(nConn)
+	}
+}
+func runSFTPServer(nConn net.Conn) error {
+	nConn.SetReadDeadline(time.Now().Add(5 * time.Second))
+	nConn.SetDeadline(time.Now().Add(600 * time.Second))
+	nConn.SetWriteDeadline(time.Now().Add(10 * time.Second))
 	config := sftpserver.GetConfig()
-	_, chans, reqs, err := ssh.NewServerConn(nConn, config)
+	// set timeout incase client opens connection but doesn't do anything.
+	serverConn, chans, reqs, err := ssh.NewServerConn(nConn, config)
 	if err != nil {
 		return err
 	}
@@ -46,8 +61,12 @@ func runSFTPServer(t *tebata.Tebata, lis net.Listener) error {
 	for newChannel := range chans {
 		log.Info("Incoming Channel: ", newChannel.ChannelType())
 		if newChannel.ChannelType() != "session" {
+			log.Info("Unknown: ", newChannel.ChannelType())
 			newChannel.Reject(ssh.UnknownChannelType, "unknown channel type")
 			continue
+		} else {
+			log.Info("Got channel: ", newChannel.ChannelType())
+			log.Info("Extra info:", string(newChannel.ExtraData()))
 		}
 		channel, requests, err := newChannel.Accept()
 		if err != nil {
@@ -56,18 +75,26 @@ func runSFTPServer(t *tebata.Tebata, lis net.Listener) error {
 		go func(in <-chan *ssh.Request) {
 			for req := range in {
 				ok := false
+				log.Printf("payload: %v", string(req.Payload))
+				log.Printf("type: %v", req.Type)
 				switch req.Type {
 				case "subsystem":
 					log.Info("Subsystem: ", string(req.Payload[4:]))
 					if string(req.Payload[4:]) == "sftp" {
 						ok = true
 					}
+				default:
+					ok = false
 				}
 				req.Reply(ok, nil)
 			}
 		}(requests)
+		serverOptions := []sftp.ServerOption{
+			sftp.WithDebug(os.Stdout),
+			sftp.ReadOnly(),
+		}
 
-		server, err := sftp.NewServer(channel, sftp.ReadOnly())
+		server, err := sftp.NewServer(channel, serverOptions...)
 		if err != nil {
 			return err
 		}
@@ -76,11 +103,11 @@ func runSFTPServer(t *tebata.Tebata, lis net.Listener) error {
 		defer server.Close()
 		// t.Reserve(server.Close) - doesn't work
 		if err := server.Serve(); err == io.EOF {
-			log.Info("sftp client exited session.")
+			log.Infof("sftp client %s exited session.", serverConn.ClientVersion())
+			server.Close()
 		} else if err != nil {
 			log.Error("sftp server completed with error", err)
 		}
-
 	}
 	return nil
 }
@@ -118,7 +145,7 @@ func main() {
 	t.Reserve(shutdown)
 
 	// for sftp server
-	if err := runSFTPServer(t, sftplis); err != nil {
-		log.Fatal(err)
+	if err := listenSFTPServer(t, sftplis); err != nil {
+		log.Error("Error from main", err)
 	}
 }

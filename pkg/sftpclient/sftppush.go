@@ -8,7 +8,7 @@ import (
 )
 
 // Push copies inputfile to a remote sftp server as outputfile
-func Push(inputfile, outputfile string, client *Client) (int64, error) {
+func (client *Client) Push(inputfile, outputfile string) (int64, error) {
 	output, err := client.Conn.Create(outputfile)
 	if err != nil {
 		log.Error("Error with Output file")

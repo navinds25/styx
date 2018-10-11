@@ -9,7 +9,7 @@ import (
 )
 
 // BasicCopyfromRemote copies a file from a remote sftp server.
-func BasicCopyfromRemote(inputfile, outputfile string, client *Client) error {
+func (client *Client) BasicCopyfromRemote(inputfile, outputfile string) error {
 	input, err := client.Conn.Open(inputfile)
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func BasicCopyfromRemote(inputfile, outputfile string, client *Client) error {
 }
 
 // Pull copies inputfile from a remote sftp server as outputfile on the local filesystem.
-func Pull(inputfile, outputfile string, client *Client) (int64, error) {
+func (client *Client) Pull(inputfile, outputfile string) (int64, error) {
 	input, err := client.Conn.Open(inputfile)
 	if err != nil {
 		log.Error("Error creating input file: ", inputfile)

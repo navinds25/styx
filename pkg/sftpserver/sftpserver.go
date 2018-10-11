@@ -15,7 +15,7 @@ func GetConfig() *ssh.ServerConfig {
 			// Should use constant-time compare (or better, salt+hash) in
 			// a production setting.
 			log.Info("Login: %s\n", c.User())
-			if c.User() == "testuser" && string(pass) == "tiger" {
+			if c.User() == "testusr" && string(pass) == "tiger" {
 				return nil, nil
 			}
 			return nil, fmt.Errorf("password rejected for %q", c.User())

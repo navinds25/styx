@@ -14,14 +14,23 @@ type Client struct {
 	ID   string
 }
 
+// Object interface for sftpclient
+//type Object interface {
+//	BasicCopyfromRemote(inputfile, outputfile) error
+//	Pull()
+//	Push()
+//}
+
 // Input is a struct for creating the sftp client
 type Input struct {
-	Address        string
-	Username       string
-	Password       string
-	Protocol       string
-	AuthMethod     string
-	PrivateKey     string
+	Address  string
+	Username string
+	Password string
+	Protocol string
+	// AuthMethod: One of pk, pk+pass, pass
+	AuthMethod string
+	PrivateKey string
+	// ?
 	ConnectionType string
 }
 
