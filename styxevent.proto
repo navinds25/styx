@@ -9,6 +9,8 @@ package styxevent;
 service Styx {
     rpc FileSearch (SearchFileInfo) returns (FoundFile);
     rpc FileSearchStream(stream SearchFileInfo) returns (stream FoundFile);
+    rpc ReqFileTransfer (RequestFileTransfer) returns (Ack);
+    rpc PullFile (GetRemoteFile) returns (Ack);
 }
 
 message Ack {
@@ -29,4 +31,25 @@ message FoundFile {
     string match = 3;
     string regmatch = 4;
     string error = 5;
+}
+
+message GetRemoteFile {
+    string jid = 1;
+    string type = 2;
+    string sourcefile = 3;
+    string destinationfile = 4;
+    string sourceserver = 5;
+    string authmethod = 6;
+    string username = 7;
+    string password = 8;
+    string key = 9;
+}
+
+message RequestFileTransfer {
+    string jid = 1;
+    string type = 2;
+    string sourcefile = 3;
+    string destinationfile = 4;
+    string sourceserver = 5;
+    string destinationserver = 6;
 }

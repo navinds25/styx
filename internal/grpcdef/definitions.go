@@ -28,7 +28,7 @@ func (s *Server) FileSearchStream(stream pb.Styx_FileSearchStreamServer) error {
 		if err != nil {
 			return err
 		}
-		log.Println("Got %v ", in)
+		log.Println("Got ", in)
 		dM, _, err := find.File(in.Filename)
 		if err != nil {
 			log.Error(err)

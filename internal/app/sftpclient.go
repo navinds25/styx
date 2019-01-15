@@ -7,13 +7,21 @@ import (
 
 // RunSftpClient runs sftpclient for something
 func RunSftpClient(inFile, outFile string, pull bool) error {
+	//	config := sftpclient.Input{
+	//		Address:    "35.200.177.113:26773",
+	//		Protocol:   "tcp",
+	//		Username:   "navin",
+	//		Password:   "xi6XTtpk6q7nw8oaL6DLfgd",
+	//		PrivateKey: "/home/navin/.ssh/google_compute_engine",
+	//		AuthMethod: "pk",
+	//	}
+
 	config := sftpclient.Input{
-		Address:    "35.200.177.113:26773",
+		Address:    "127.0.0.1:28888",
 		Protocol:   "tcp",
-		Username:   "navin",
-		Password:   "xi6XTtpk6q7nw8oaL6DLfgd",
-		PrivateKey: "/home/navin/.ssh/google_compute_engine",
-		AuthMethod: "pk",
+		Username:   "testusr",
+		Password:   "tiger",
+		AuthMethod: "pass",
 	}
 
 	client, err := sftpclient.CreateClient(config)

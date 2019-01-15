@@ -11,7 +11,7 @@ func main() {
 	i.AuthMethod = "pass"
 	i.Protocol = "tcp"
 	i.Password = "tiger"
-	i.Username = "testuser"
+	i.Username = "testusr"
 	client, err := sftpclient.CreateClient(i)
 	if err != nil {
 		log.Fatal(err)
@@ -21,5 +21,12 @@ func main() {
 		log.Fatal(err)
 	}
 	log.Println(dir)
-	//client.Conn.Close()
+	dirInfo, err := client.Conn.ReadDir(dir)
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, entry := range dirInfo {
+		log.Println(entry.Name())
+	}
+	client.Conn.Close()
 }

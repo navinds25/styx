@@ -16,12 +16,12 @@ func (client *Client) BasicCopyfromRemote(inputfile, outputfile string) error {
 	}
 	output, err := os.Create(outputfile)
 	if err != nil {
-		log.Error("Error creating output file: %s ; Err: %v", outputfile, err)
+		log.Errorf("Error creating output file: %s ; Err: %v", outputfile, err)
 		return err
 	}
 	bytes, err := io.Copy(output, input)
 	if err != nil {
-		log.Error("Error copying file %s to %s, Err: %v", inputfile, outputfile, err)
+		log.Errorf("Error copying file %s to %s, Err: %v", inputfile, outputfile, err)
 		return err
 	}
 	defer func() {

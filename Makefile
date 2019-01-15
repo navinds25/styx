@@ -8,17 +8,18 @@ all: clean proto test fmt lint vet megacheck build cover
 
 .PHONY: build
 build:
-	go build ${GO_LDFLAGS} -o ${NAME}
-
+	mkdir bin | tee /dev/stderr
+	cd bin && go build ${GO_LDFLAGS} ../cmd/styxnode/styxnode.go
+	cd bin && go build ${GO_LDFLAGS} ../cmd/styxmaster/styxmaster.go
 
 proto:
-	rm -v pkg/styxevent/* && rmdir pkg/styxevent
+	rm -v pkg/styxevent/* | tee /dev/stderr && rmdir pkg/styxevent
 	mkdir pkg/styxevent
 	protoc -I. ${NAME}event.proto --go_out=plugins=grpc:pkg/${NAME}event
 
 .PHONY: clean
 clean:
-	rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v ${NAME} | tee /dev/stderr ; rm -v coverage.txt | tee /dev/stderr
+	rm -rfv bin | tee /dev/stderr ; rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v coverage.txt | tee /dev/stderr
 
 .PHONY: test
 test:
@@ -39,6 +40,10 @@ vet:
 .PHONY: megacheck
 megacheck:
 	megacheck $(shell go list ./... | grep -v vendor) | grep -v '.pb.go' | tee /dev/stderr
+
+.PHONY: hostkey
+hostkey:
+	ssh-keygen -t rsa -N "" -f host_key && rm -v host_key.pub
 
 .PHONY: cover
 cover: ## Runs go test with coverage

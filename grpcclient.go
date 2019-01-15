@@ -11,9 +11,9 @@ import (
 	"google.golang.org/grpc"
 )
 
-const address = "127.0.0.1:50051"
+const address = "127.0.0.1:28889"
 
-func main() {
+func streammain() {
 	conn, err := grpc.Dial(address, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal("Did not connect ", err)
@@ -24,13 +24,14 @@ func main() {
 	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
 	defer cancel()
-	p := &pb.SearchFileInfo{}
-	p.Filename = "hello.txt"
-	p.Type = "filesearch"
-	p.Server = "local"
+	p := &pb.SearchFileInfo{
+		Filename: "hello.txt",
+		Type:     "filesearch",
+		Server:   "local",
+	}
 	stream, err := c.FileSearchStream(ctx)
 	if err != nil {
-		log.Fatal("Problem executing grpc func")
+		log.Fatal(err)
 	}
 	if err := stream.Send(p); err != nil {
 		log.Error("Error sending message from client")
@@ -52,4 +53,33 @@ func main() {
 		}
 		log.Println(file)
 	}
+}
+
+func main() {
+	conn, err := grpc.Dial(address, grpc.WithInsecure())
+	if err != nil {
+		log.Fatal("Did not connect ", err)
+	}
+	defer conn.Close()
+	c := pb.NewStyxClient(conn)
+	clientDeadline := time.Now().Add(time.Duration(1000000) * time.Millisecond)
+	//ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithDeadline(context.Background(), clientDeadline)
+	defer cancel()
+	p := &pb.GetRemoteFile{
+		Jid:             "1",
+		Type:            "filepull",
+		Sourcefile:      "/home/sysusr/install.sh",
+		Destinationfile: "/home/navin/deldir/install.sh",
+		Sourceserver:    "13.233.92.228:28888",
+		Authmethod:      "pass",
+		Username:        "testusr",
+		Password:        "tiger",
+	}
+	log.Println("Sending message to pull file")
+	message, err := c.PullFile(ctx, p)
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Info(message)
 }
