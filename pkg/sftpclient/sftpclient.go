@@ -35,7 +35,7 @@ type Input struct {
 }
 
 // CreateSSHConfig returns a config instance used to create an ssh/sftp connection.
-func CreateSSHConfig(inputConf Input) (*ssh.ClientConfig, error) {
+func CreateSSHConfig(inputConf *Input) (*ssh.ClientConfig, error) {
 	switch inputConf.AuthMethod {
 	case "pk":
 		key, err := ioutil.ReadFile(inputConf.PrivateKey)
@@ -70,7 +70,7 @@ func CreateSSHConfig(inputConf Input) (*ssh.ClientConfig, error) {
 }
 
 // CreateClient creates an sftp client
-func CreateClient(inputConf Input) (*Client, error) {
+func CreateClient(inputConf *Input) (*Client, error) {
 	client := Client{}
 	config, err := CreateSSHConfig(inputConf)
 	if err != nil {

@@ -92,9 +92,9 @@ func handleChannel(newChannel ssh.NewChannel) {
 				log.Info("Subsystem: ", string(req.Payload[4:]))
 				if string(req.Payload[4:]) == "sftp" {
 					ok = true
-					return
 				}
 			default:
+				log.Error("no subsystem")
 				ok = false
 				return
 			}

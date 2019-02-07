@@ -11,7 +11,7 @@ import (
 
 // PullFile pulls a file from a remote server
 func (s *Server) PullFile(ctx context.Context, inFileCfg *pb.GetRemoteFile) (*pb.Ack, error) {
-	input := sftpclient.Input{
+	input := &sftpclient.Input{
 		Address:    inFileCfg.Sourceserver,
 		Protocol:   "tcp",
 		Username:   inFileCfg.Username,

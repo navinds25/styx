@@ -1,0 +1,24 @@
+servers:
+  server_name: server_ip
+  server1: 172.0.0.1
+  server2: 172.0.0.2
+
+scheduled_transfers:
+ - 
+  transfer_id: hello.txt-transfer
+  source_file: hello.txt
+  source_server: server1 
+  destination_file: hello.txt
+  destination_server: server2
+  credentials:
+    username: testusr
+    password: tiger
+ -
+  transfer_id: file2-transfer
+  source_file: file2.txt
+  source_server: server2
+  destination_server: server1
+  credentials:
+    username: testusr
+    password: tiger
+

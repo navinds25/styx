@@ -1,6 +1,7 @@
 COMMIT=$(shell git rev-parse --short HEAD)
 DATE=$(shell date +%F)
 BUILD=$(shell echo "${BUILDNUMBER}")
+CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
@@ -43,6 +44,11 @@ megacheck:
 
 .PHONY: hostkey
 hostkey:
+	mkdir -p etc/ssh/
+	ssh-keygen -A -f ${CWD}
+
+.PHONY: sshkey
+sshkey:
 	ssh-keygen -t rsa -N "" -f host_key && rm -v host_key.pub
 
 .PHONY: cover

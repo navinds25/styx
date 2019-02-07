@@ -7,6 +7,7 @@ import (
 	"github.com/navinds25/styx/internal/grpcdef"
 	"github.com/navinds25/styx/internal/styxcli"
 	"github.com/navinds25/styx/pkg/sftpserver"
+	"github.com/navinds25/styx/pkg/styxconfig"
 	pb "github.com/navinds25/styx/pkg/styxevent"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -37,6 +38,11 @@ func main() {
 	if err := app.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
+	config, err := styxconfig.GetConfig("_extra/config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Println(config)
 	//t := tebata.New(syscall.SIGINT, syscall.SIGTERM)
 	grpcAddress := styxcli.InterfaceAddress + ":" + styxcli.GrpcPort
 	grpclis, err := net.Listen("tcp", grpcAddress)
