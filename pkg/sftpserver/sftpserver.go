@@ -7,14 +7,13 @@ import (
 	"net"
 	"os"
 
-	"github.com/navinds25/styx/internal/styxcli"
 	"github.com/pkg/sftp"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/crypto/ssh"
 )
 
 // GetConfig returns the config for the ssh/sftp server
-func GetConfig() *ssh.ServerConfig {
+func GetConfig(sshhostkey string) *ssh.ServerConfig {
 	config := ssh.ServerConfig{
 		PasswordCallback: func(c ssh.ConnMetadata, pass []byte) (*ssh.Permissions, error) {
 			// Should use constant-time compare (or better, salt+hash) in
@@ -27,7 +26,7 @@ func GetConfig() *ssh.ServerConfig {
 		},
 	}
 
-	privateBytes, err := ioutil.ReadFile(styxcli.SSHHOSTKEY)
+	privateBytes, err := ioutil.ReadFile(sshhostkey)
 	if err != nil {
 		log.Fatal("Failed to load private key", err)
 	}
@@ -43,8 +42,8 @@ func GetConfig() *ssh.ServerConfig {
 }
 
 // ListenSFTPServer starts an SFTP Server
-func ListenSFTPServer(lis net.Listener) error {
-	config := GetConfig()
+func ListenSFTPServer(lis net.Listener, sshhostkey string) error {
+	config := GetConfig(sshhostkey)
 	for {
 		nConn, err := lis.Accept()
 		if err != nil {

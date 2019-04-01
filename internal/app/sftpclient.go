@@ -24,7 +24,7 @@ func RunSftpClient(inFile, outFile string, pull bool) error {
 		AuthMethod: "pass",
 	}
 
-	client, err := sftpclient.CreateClient(config)
+	client, err := sftpclient.CreateClient(&config)
 	if err != nil {
 		return err
 	}
@@ -41,7 +41,7 @@ func RunSftpClient(inFile, outFile string, pull bool) error {
 	for _, file := range files {
 		log.Println(file.Name())
 	}
-	bytesTransferred, err := sftpclient.Push(inFile, "write/"+outFile, client)
+	bytesTransferred, err := client.Push(inFile, "write/"+outFile)
 	if err != nil {
 		log.Error(err)
 	}

@@ -1,9 +1,5 @@
 syntax = "proto3";
 
-option java_multiple_files = true;
-option java_package = "io.grpc.examples.styxevent";
-option java_outer_classname = "styxevent";
-
 package styxevent;
 
 service Styx {
@@ -11,10 +7,18 @@ service Styx {
     rpc FileSearchStream(stream SearchFileInfo) returns (stream FoundFile);
     rpc ReqFileTransfer (RequestFileTransfer) returns (Ack);
     rpc PullFile (GetRemoteFile) returns (Ack);
+
+// sftpmgmt functions
+    rpc GRPCTest (Ack) returns (Ack);
+    rpc AddConfig (SftpTransferConfig) returns (Ack);
+    rpc ListConfig (Noparams) returns (stream SftpTransferConfig);
 }
+
+message Noparams {}
 
 message Ack {
     string message = 1;
+    string error = 2;
 }
 
 message SearchFileInfo {
@@ -53,3 +57,31 @@ message RequestFileTransfer {
     string sourceserver = 5;
     string destinationserver = 6;
 }
+
+message SftpTransferConfig {
+    string transferid = 1;
+    string description = 2;
+    enum TransferType {
+        Pull = 0;
+        Push = 1;
+    }
+    TransferType type = 3;
+    string localfile = 4;
+    string localpath = 5;
+    string remotefile = 6;
+    string remotepath = 7;
+    string remotehost = 8;
+    int32 remoteport = 9;
+    string remoteuser = 10;
+    string remotepassword = 11;
+    string remotekey = 12;
+}
+
+// Not using nested grpc messages for simplicity and to avoid using too many different structs.
+// Nested message example:
+// message rootMessage {
+//     message foo {
+//         string bar = 1;
+//     }   
+//}
+
