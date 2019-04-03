@@ -7,7 +7,8 @@ import (
 	"strings"
 
 	"github.com/dgraph-io/badger"
-	"github.com/navinds25/etlMover/pkg/config"
+	"github.com/navinds25/styx/pkg/sftpconfig"
+
 	log "github.com/sirupsen/logrus"
 )
 
@@ -19,7 +20,7 @@ func InitFilesDB(s FilesStore) {
 // FilesStore is the main interface for the backend
 type FilesStore interface {
 	CheckFileExists([]byte) (bool, error)
-	AddFile(string, *config.Transfer) error
+	AddFile(string, *sftpconfig.TransferConfig) error
 	GetFile() error
 	DeleteFile(string) error
 	CloseFilesDB() error
@@ -51,14 +52,14 @@ func (badgerDB BadgerDB) CheckFileExists(key []byte) (bool, error) {
 // AddFile adds a new file in the Files DB
 // Key is the full path of the destination file.
 // Value is TransferConfig for the file.
-func (badgerDB BadgerDB) AddFile(key string, value *config.Transfer) error {
+func (badgerDB BadgerDB) AddFile(key string, value *sftpconfig.TransferConfig) error {
 	fileKey := strings.TrimSpace(key)
 	buf := bytes.Buffer{}
 	if err := gob.NewEncoder(&buf).Encode(value); err != nil {
 		return err
 	}
 	txn := badgerDB.FilesDB.NewTransaction(true)
-	defer txn.Commit()
+	defer txn.Commit(nil)
 	log.Debug("AddFile: key {string}: ", fileKey)
 	if err := txn.Set([]byte(fileKey), buf.Bytes()); err != nil {
 		return err
@@ -75,7 +76,7 @@ func (badgerDB BadgerDB) GetFile() error {
 func (badgerDB BadgerDB) DeleteFile(key string) error {
 	fileKey := strings.TrimSpace(key)
 	txn := badgerDB.FilesDB.NewTransaction(true)
-	defer txn.Commit()
+	defer txn.Commit(nil)
 	log.Debug("DeleteFile: key {string}: ", fileKey)
 	if err := txn.Delete([]byte(fileKey)); err != nil {
 		return err

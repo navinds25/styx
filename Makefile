@@ -20,7 +20,7 @@ proto:
 
 .PHONY: clean
 clean:
-	rm -rfv bin | tee /dev/stderr ; rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v coverage.txt | tee /dev/stderr
+	rm -rfv bin | tee /dev/stderr ; rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
 
 .PHONY: test
 test:

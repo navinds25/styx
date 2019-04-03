@@ -49,8 +49,5 @@ func GetConfig(configFile string) (*Config, error) {
 	if err := json.Unmarshal(jsonData, &config); err != nil {
 		return nil, err
 	}
-	//if err := yaml.NewDecoder(file).Decode(&config); err != nil {
-	//	return nil, err
-	//}
 	return &config, nil
 }

@@ -17,6 +17,9 @@ var MainFlagVal MainFlags
 // Action is for the cli Commands
 var Action string
 
+// SubAction is for the subcommands in the cli
+var SubAction string
+
 // MainFlags is a struct for the main cli flags
 type MainFlags struct {
 	SetupService     bool
@@ -92,16 +95,8 @@ func Cli() *cli.App {
 	app.Name = ApplicationName
 	app.Usage = "The file transfer application"
 	app.Commands = []cli.Command{
-		sftpConfDBCli,
+		sftpConfCli,
 	}
 	app.Flags = mainCliFlags
 	return app
 }
-
-// TO Be Handled in Cli:
-/*
-1. Add SFTP Transfer Config
-2. Delete SFTP Transfer Config
-3. List All Config
-4. Delete files from Files DB
-*/

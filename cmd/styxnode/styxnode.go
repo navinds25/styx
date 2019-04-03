@@ -13,7 +13,6 @@ import (
 	"github.com/navinds25/styx/pkg/sftpdata"
 	"github.com/navinds25/styx/pkg/sftpserver"
 	pb "github.com/navinds25/styx/pkg/styxevent"
-	"github.com/sirupsen/logrus"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -40,7 +39,7 @@ func init() {
 	logwriter := io.MultiWriter(os.Stdout, logfile)
 	log.SetOutput(logwriter)
 	log.SetReportCaller(true)
-	customLogFormat := new(logrus.JSONFormatter)
+	customLogFormat := new(log.JSONFormatter)
 	customLogFormat.PrettyPrint = true
 	customLogFormat.TimestampFormat = "2006-01-02 15:04:05"
 	log.SetFormatter(customLogFormat)
@@ -72,13 +71,18 @@ func main() {
 	//}
 	// log.Info("Processed application config")
 
-	// Setup Databases
-	if err := app.DBSetup(); err != nil {
+	// Setup the Styx Databases
+	if err := app.StyxNodeDBSetup(); err != nil {
+		log.Fatal(err)
+	}
+
+	// Setup the SFTP Databases
+	if err := app.SFTPDBSetup(); err != nil {
 		log.Fatal(err)
 	}
 	defer sftpdata.Data.Config.CloseConfigDB()
 	defer sftpdata.Data.Files.CloseFilesDB()
-	log.Info("Setup Databases")
+	log.Info("Setup SFTP Databases")
 
 	// GRPC Server
 	grpcAddress := styxcli.MainFlagVal.InterfaceAddress + ":" + strconv.Itoa(styxcli.MainFlagVal.GrpcPort)
