@@ -59,7 +59,7 @@ func (badgerDB BadgerDB) AddFile(key string, value *sftpconfig.TransferConfig) e
 		return err
 	}
 	txn := badgerDB.FilesDB.NewTransaction(true)
-	defer txn.Commit(nil)
+	defer txn.Commit()
 	log.Debug("AddFile: key {string}: ", fileKey)
 	if err := txn.Set([]byte(fileKey), buf.Bytes()); err != nil {
 		return err
@@ -76,7 +76,7 @@ func (badgerDB BadgerDB) GetFile() error {
 func (badgerDB BadgerDB) DeleteFile(key string) error {
 	fileKey := strings.TrimSpace(key)
 	txn := badgerDB.FilesDB.NewTransaction(true)
-	defer txn.Commit(nil)
+	defer txn.Commit()
 	log.Debug("DeleteFile: key {string}: ", fileKey)
 	if err := txn.Delete([]byte(fileKey)); err != nil {
 		return err

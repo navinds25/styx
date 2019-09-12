@@ -7,9 +7,9 @@ import (
 	"net"
 	"os"
 
-	"github.com/pkg/sftp"
+	"github.com/ScriptRock/sftp"
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/crypto/ssh"
+	"github.com/ScriptRock/crypto/ssh"
 )
 
 // GetConfig returns the config for the ssh/sftp server

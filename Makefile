@@ -5,7 +5,7 @@ CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
-all: clean proto test fmt lint vet megacheck build cover
+all: clean proto fmt lint vet megacheck build cover
 
 .PHONY: build
 build:
@@ -24,7 +24,7 @@ clean:
 
 .PHONY: test
 test:
-	go test github.com/navinds25/maitre/pkg/saltfunc/
+	go test -race github.com/navinds25/maitre/pkg/saltfunc/
 
 .PHONY: fmt
 fmt:
