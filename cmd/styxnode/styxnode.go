@@ -6,13 +6,12 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/jasonlvhit/gocron"
-	"github.com/navinds25/styx/internal/app"
-	"github.com/navinds25/styx/internal/grpcdef"
+	//"github.com/jasonlvhit/gocron"
+
 	"github.com/navinds25/styx/internal/styxcli"
-	"github.com/navinds25/styx/pkg/sftpdata"
-	"github.com/navinds25/styx/pkg/sftpserver"
-	pb "github.com/navinds25/styx/pkg/styxevent"
+	"github.com/navinds25/styx/pkg/filetransfer"
+	ftpb "github.com/navinds25/styx/pkg/filetransferpb"
+	"github.com/navinds25/styx/pkg/styxsftp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )
@@ -21,7 +20,7 @@ import (
 var Version string
 
 func runGRPCServer(lis net.Listener, s *grpc.Server) error {
-	pb.RegisterStyxServer(s, &grpcdef.Server{})
+	ftpb.RegisterFTServer(s, &filetransfer.FTServer{})
 	log.Info("Started GRPC Server")
 	if err := s.Serve(lis); err != nil {
 		return err
@@ -29,6 +28,20 @@ func runGRPCServer(lis net.Listener, s *grpc.Server) error {
 	defer s.GracefulStop()
 	defer lis.Close()
 	return nil
+	//if err := s.Serve(lis); err != nil {
+	//	return err
+	//}
+	//defer s.GracefulStop()
+	//defer lis.Close()
+	//return nil
+	//pb.RegisterStyxServer(s, &grpcdef.Server{})
+	//log.Info("Started GRPC Server")
+	//if err := s.Serve(lis); err != nil {
+	//	return err
+	//}
+	//defer s.GracefulStop()
+	//defer lis.Close()
+	//return nil
 }
 
 func init() {
@@ -72,17 +85,17 @@ func main() {
 	// log.Info("Processed application config")
 
 	// Setup the Styx Databases
-	if err := app.StyxNodeDBSetup(); err != nil {
-		log.Fatal(err)
-	}
+	//if err := app.StyxNodeDBSetup(); err != nil {
+	//	log.Fatal(err)
+	//}
 
 	// Setup the SFTP Databases
-	if err := app.SFTPDBSetup(); err != nil {
-		log.Fatal(err)
-	}
-	defer sftpdata.Data.Config.CloseConfigDB()
-	defer sftpdata.Data.Files.CloseFilesDB()
-	log.Info("Setup SFTP Databases")
+	//if err := app.SFTPDBSetup(); err != nil {
+	//	log.Fatal(err)
+	//}
+	//defer sftpdata.Data.Config.CloseConfigDB()
+	//defer sftpdata.Data.Files.CloseFilesDB()
+	//log.Info("Setup SFTP Databases")
 
 	// GRPC Server
 	grpcAddress := styxcli.MainFlagVal.InterfaceAddress + ":" + strconv.Itoa(styxcli.MainFlagVal.GrpcPort)
@@ -106,15 +119,19 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	go func() {
-		log.Info("SFTP server listening on: ", sftpAddress)
-		if err := sftpserver.ListenSFTPServer(sftplis, styxcli.MainFlagVal.SSHHOSTKEY); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	//go func() {
+	//	log.Info("SFTP server listening on: ", sftpAddress)
+	//	if err := sftpserver.ListenSFTPServer(sftplis, styxcli.MainFlagVal.SSHHOSTKEY); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}()
 
 	// Run Tasks
-	scheduleI := gocron.NewScheduler()
-	scheduleI.Every(8).Seconds().Do(app.RunJobs)
-	<-scheduleI.Start()
+	//scheduleI := gocron.NewScheduler()
+	//scheduleI.Every(8).Seconds().Do(app.RunJobs)
+	//<-scheduleI.Start()
+	log.Info("SFTP server listening on: ", sftpAddress)
+	if err := styxsftp.ListenSFTPServer(sftplis, styxcli.MainFlagVal.SSHHOSTKEY); err != nil {
+		log.Fatal(err)
+	}
 }

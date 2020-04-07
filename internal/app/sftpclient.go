@@ -1,13 +1,13 @@
 package app
 
 import (
-	"github.com/navinds25/styx/pkg/sftpclient"
+	"github.com/navinds25/styx/pkg/styxsftp"
 	log "github.com/sirupsen/logrus"
 )
 
 // RunSftpClient runs sftpclient for something
 func RunSftpClient(inFile, outFile string, pull bool) error {
-	config := sftpclient.Input{
+	config := styxsftp.Input{
 		Address:    "127.0.0.1:28888",
 		Protocol:   "tcp",
 		Username:   "testusr",
@@ -15,7 +15,7 @@ func RunSftpClient(inFile, outFile string, pull bool) error {
 		AuthMethod: "pass",
 	}
 
-	client, err := sftpclient.CreateClient(&config)
+	client, err := styxsftp.CreateClient(&config)
 	if err != nil {
 		return err
 	}

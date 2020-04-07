@@ -35,7 +35,7 @@
 ## Features:
 ### External SFTP Pull
 - External SFTP pull main process
-  * Read config from file/enter through input
+  * Read config from file
   * send config via grpc client
   * server function add config to database
   * read configs from database
@@ -55,6 +55,7 @@
 - Security
   * test grpc with certificates - especially on windows
   * add encryption for username/password for external sftp servers
+
 ### Internal Transfers
 - Configuration
 - GRPC Processing
@@ -62,7 +63,7 @@
 - Post processing
 
 ## Progress:
-* Read config from file/enter through input
+* Read config from file
   - [ ] external sftp
   - [ ] internal transfer
 * target styxnode based on config
@@ -114,3 +115,67 @@
 
 ## Notes:
 * dep ensure/init does not work if the protobuf package is generated. Run make clean before dep ensure it runs to completion.
+
+Config -> Etcd/Consul -> Styx(Read full config in memory on change) -> Run Job
+Request -> Styx -> Run Job
+
+Handling Failures:
+Success -> BadgerDB
+Failure -> BadgerDB + Log + Alert
+
+
+Request Types:
+
+Config Types:
+
+
+## Architecture:
+
+This application transfers files by executing jobs, the jobs defined pre and post transfer logic for determining how and whether the transfer should take place.
+Each job consists of Actions in order to do so. These are the following actions 
+1. Trigger: This handles the start of the job.
+  - [ ] Manual Request
+  - [ ] Cron
+  - [ ] Inotify
+2. PreExecutor:
+  This is for executing something before the start of a job. eg: send http request or whitelist connection or run a check.
+  - [ ] Transfer Check - checks that it's okay to transfer from the directory defined in the job.
+3. Matcher: This matches files based on timestamp and/or pattern. Need to change this from switch-case to if-else.
+  - [ ] Transfer Check - checks that it's okay to transfer from the directory defined in the job.
+  - [ ] Matcher
+4. FileCheck: This runs a check on individual files that are about to be transferred.
+  - [ ] OL - OL or Overwrite Logic handles the logic for files that are about to be overwritten.
+5. Transfer: 
+  - [ ] Pull
+  - [ ] Push
+  - [ ] PullExternal
+  - [ ] PushExternal
+6. PostExecutor: This is for Executing something at the end of a job.
+  - [ ] CmdExecutor - for executing a command.
+
+
+### Job Configuration:
+
+* Trigger
+* Source
+- NodeID -
+- SPath
+- SFile
+- SCondition
+- SExecutor
+* Destination - 
+
+### Node/Peer Configuration:
+
+* NodeID
+- External - bool
+- IPAddress/DomainName
+- GRPC Port
+- SFTP Port
+- GRPC TLS Key
+- GRPC TLS Cert
+- GRPC Authentication ?
+- SFTP Username
+- SFTP Password
+
+### Job trigger:

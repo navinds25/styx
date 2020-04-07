@@ -1,0 +1,113 @@
+syntax = "proto3";
+
+package filetransferpb;
+
+
+//option go_package = "pkg/filetransfer";
+
+// filelistevents:
+message RemoteDirectory {
+    string source_path = 1;
+}
+
+message RemoteFile {
+    string sourcefile = 1;
+}
+
+message TimeValues {
+    int64 time_start = 1;
+    int64 time_end = 2;
+}
+
+message Condition {
+    enum ConditionType {
+        CT_UNSPECIFIED = 0;
+        TIME = 0;
+        TIME_RANGE = 1;
+        REGEX = 2;
+        GLOB = 3;
+    }
+    ConditionType condition_type = 1;
+    TimeValues time_values = 2;
+    string pattern = 3;
+}
+
+message RemoteDirectoryCondition {
+    string source_path = 1;
+    repeated Condition condition = 2;
+}
+
+// filetransferevents
+message RemoteDirectoryTransfer {
+    enum TransferType {
+        UNSPECIFIED = 0;
+        PULL = 1;
+        PUSH = 2;
+    }
+    TransferType transfer_type = 1;
+    string source_path = 2;
+    string destination_path = 3;
+    string remote_server = 4;
+}
+
+message RemoteDirectoryConditionTransfer {
+    RemoteDirectoryTransfer remote_directory = 1;
+    Condition precondition = 2;
+}
+
+message TransferStatus {
+    string transferred_file = 1;
+}
+
+// node config events
+message GRPCAuth {
+    string tls_cert = 1; // change to bytes ?
+    //string tls_key = 2; //change to bytes ?
+}
+
+message SFTPAuth {
+    enum SFTPAuthType {
+        UNSPECIFIED = 0;
+        PASSWORD = 1;
+        KEYBASED = 2;
+        KEYPASSPHRASE = 3;
+    }
+    SFTPAuthType sftp_auth_type = 1;
+    string username = 2;
+    string password = 3;
+    string key = 4;
+}
+
+message NodeEntry {
+    string node_id = 1;
+    bool external = 2;
+    string ip_address = 3;
+    string grpc_port = 4;
+    string sftp_port = 5;
+    enum EnvSec {
+        UNSPECIFIED = 0;
+        DMZ = 1;
+        APPTIER = 2;
+        DATATIER = 3;
+        CONTROLPLANE = 4;
+    }
+    EnvSec env_sec = 6;
+    GRPCAuth grpc_auth = 7;
+    SFTPAuth sftp_auth = 8;
+    //string sftp_hostkey = 9; // change to bytes ?
+}
+
+message NodeEntryStatus {
+    string NodeID = 1;
+    string Message = 2;
+    enum Status {
+        STATUS_UNSPECIFIED = 0;
+        STATUS_SUCCESS = 1;
+        STATUS_ERROR = 2;
+    }
+    Status status = 3;
+}
+
+//message JobConfig {
+//
+//}

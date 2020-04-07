@@ -4,14 +4,14 @@ import (
 	"context"
 	"log"
 
-	"github.com/navinds25/styx/pkg/sftpconfig"
 	"github.com/navinds25/styx/pkg/sftpdata"
 	pb "github.com/navinds25/styx/pkg/styxevent"
+	"github.com/navinds25/styx/pkg/styxsftp"
 )
 
 // AddConfig adds a config to config db.
 func (s *Server) AddConfig(ctx context.Context, tc *pb.SftpTransferConfig) (*pb.Ack, error) {
-	transferConfig := &sftpconfig.TransferConfig{
+	transferConfig := &styxsftp.TransferConfig{
 		TransferID:     tc.Transferid,
 		Description:    tc.Description,
 		Type:           tc.Type.String(),

@@ -13,14 +13,15 @@ build:
 	cd bin && go build ${GO_LDFLAGS} ../cmd/styxnode/styxnode.go
 	cd bin && go build ${GO_LDFLAGS} ../cmd/styxmaster/styxmaster.go
 
+.PHONY: proto
 proto:
-	rm -v pkg/styxevent/* | tee /dev/stderr && rmdir pkg/styxevent
-	mkdir pkg/styxevent
-	protoc -I. ${NAME}event.proto --go_out=plugins=grpc:pkg/${NAME}event
+	#cd pkg/filelistpb && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
+	cd pkg/filetransferpb && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 
 .PHONY: clean
 clean:
-	rm -rfv bin | tee /dev/stderr ; rm -v pkg/styxevent/* | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
+	find pkg -name *.pb.go -exec rm {} \;
+	rm -rfv bin | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
 
 .PHONY: test
 test:
