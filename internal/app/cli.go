@@ -1,14 +1,15 @@
-package styxcli
+package app
 
 import (
 	"os"
 	"path"
 	"path/filepath"
 
+	log "github.com/sirupsen/logrus"
 	"github.com/urfave/cli"
 )
 
-// ApplicationName for the name of the application.
+// ApplicationName is the name of the app for the CLI.
 const ApplicationName = "styx"
 
 // MainFlagVal is an instance of struct for the main cli flags
@@ -31,6 +32,7 @@ type MainFlags struct {
 	GrpcPort         int
 	SftpPort         int
 	SSHHOSTKEY       string
+	Config           string
 }
 
 var mainCliFlags = []cli.Flag{
@@ -67,10 +69,23 @@ var mainCliFlags = []cli.Flag{
 		Value:       "ssh_host_rsa_key",
 		Destination: &MainFlagVal.SSHHOSTKEY,
 	},
+	cli.StringFlag{
+		Name:        "config",
+		Value:       "nodeconfig.yml",
+		Destination: &MainFlagVal.Config,
+	},
 }
 
-// GetCliFlags is a Factory function returning the struct for MainCli
-func (cliflags *MainFlags) GetCliFlags() error {
+// CliSetDefaults sets default values for empty cli flags.
+func (cliflags *MainFlags) CliSetDefaults() error {
+	if MainFlagVal.Help || MainFlagVal.Version {
+		os.Exit(0)
+	}
+	if MainFlagVal.Debug {
+		log.SetLevel(log.DebugLevel)
+		log.Debug("Debug logs enabled!")
+	}
+
 	currentDir, err := filepath.Abs(filepath.Dir(os.Args[0]))
 	if err != nil {
 		return err
@@ -95,7 +110,7 @@ func Cli() *cli.App {
 	app.Name = ApplicationName
 	app.Usage = "The file transfer application"
 	app.Commands = []cli.Command{
-		sftpConfCli,
+		//sftpConfCli,
 	}
 	app.Flags = mainCliFlags
 	return app

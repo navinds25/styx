@@ -1,16 +1,16 @@
 package main
 
 import (
-	"io"
 	"net"
 	"os"
 	"strconv"
 
 	//"github.com/jasonlvhit/gocron"
 
+	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/internal/styxcli"
 	"github.com/navinds25/styx/pkg/filetransfer"
-	ftpb "github.com/navinds25/styx/pkg/filetransferpb"
+	ftpb "github.com/navinds25/styx/pkg/styxpb"
 	"github.com/navinds25/styx/pkg/styxsftp"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -44,38 +44,18 @@ func runGRPCServer(lis net.Listener, s *grpc.Server) error {
 	//return nil
 }
 
-func init() {
-	logfile, err := os.OpenFile(styxcli.ApplicationName+".log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
-	if err != nil {
-		log.Fatal(err)
-	}
-	logwriter := io.MultiWriter(os.Stdout, logfile)
-	log.SetOutput(logwriter)
-	log.SetReportCaller(true)
-	customLogFormat := new(log.JSONFormatter)
-	customLogFormat.PrettyPrint = true
-	customLogFormat.TimestampFormat = "2006-01-02 15:04:05"
-	log.SetFormatter(customLogFormat)
-}
-
 func main() {
 	// Parse Command Line Parameters
-	appCli := styxcli.Cli()
+	app.SetupLogging()
+	appCli := app.Cli()
 	appCli.Version = Version
 	if err := appCli.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	if err := styxcli.MainFlagVal.GetCliFlags(); err != nil {
+	if err := app.MainFlagVal.CliSetDefaults(); err != nil {
 		log.Fatal(err)
 	}
-	if styxcli.MainFlagVal.Help || styxcli.MainFlagVal.Version {
-		os.Exit(0)
-	}
-	if styxcli.MainFlagVal.Debug {
-		log.SetLevel(log.DebugLevel)
-		log.Debug("Debug logs enabled!")
-	}
-	log.Info("Parsed Command Line Parameters")
+	log.Debug("Parsed Command Line Parameters")
 
 	// Process Application Configuration
 	//config, err := styxconfig.GetConfig("_extra/config.yml")

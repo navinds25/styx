@@ -10,7 +10,7 @@ import (
 
 	"github.com/navinds25/styx/internal/styxcli"
 	"github.com/navinds25/styx/pkg/filetransfer"
-	ftpb "github.com/navinds25/styx/pkg/filetransferpb"
+	ftpb "github.com/navinds25/styx/pkg/styxpb"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 )

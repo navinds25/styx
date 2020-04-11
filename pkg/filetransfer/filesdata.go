@@ -1,4 +1,4 @@
-package styxdata
+package filetransfer
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/dgraph-io/badger"
+	"github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/pkg/styxsftp"
 
 	log "github.com/sirupsen/logrus"
@@ -24,15 +24,6 @@ type FilesStore interface {
 	GetFile() error
 	DeleteFile(string) error
 	CloseFilesDB() error
-}
-
-// CloseFilesDB closes the database.
-// This is because we are not setting up the DB from the main function.
-func (badgerDB BadgerDB) CloseFilesDB() error {
-	if err := badgerDB.FilesDB.Close(); err != nil {
-		return err
-	}
-	return nil
 }
 
 // CheckFileExists checks if a file exists in the database.

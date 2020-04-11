@@ -1,11 +1,4 @@
-package styxdata
-
-import (
-	"errors"
-
-	"github.com/dgraph-io/badger"
-	"github.com/navinds25/styx/pkg/styxsftp"
-)
+package filetransfer
 
 // InitConfigDB Initializes the Database
 func InitConfigDB(s ConfigStore) {
@@ -16,16 +9,16 @@ func InitConfigDB(s ConfigStore) {
 type ConfigStore interface {
 	CheckConfigExists([]byte) (bool, error)
 	AddNodeEntry() error
-	AddSFTPEntry(*styxsftp.TransferConfig) error
+	AddSFTPEntry(*sftp.TransferConfig) error
 	DeleteSFTPEntry(string) error
 	//UpdateSFTPEntry()
-	GetAll() ([]styxsftp.TransferConfig, error)
+	GetAll() ([]sftp.TransferConfig, error)
 	CloseConfigDB() error
 }
 
 // CloseConfigDB closes the database
 // This is because we are not setting up the DB from the main function
-func (badgerDB BadgerDB) CloseConfigDB() error {
+func (badgerDB *BadgerDB) CloseConfigDB() error {
 	if err := badgerDB.ConfigDB.Close(); err != nil {
 		return err
 	}
@@ -33,7 +26,7 @@ func (badgerDB BadgerDB) CloseConfigDB() error {
 }
 
 // CheckConfigExists checks for a key in the DB
-func (badgerDB BadgerDB) CheckConfigExists(id []byte) (bool, error) {
+func (badgerDB *BadgerDB) CheckConfigExists(id []byte) (bool, error) {
 	tx := badgerDB.ConfigDB.NewTransaction(false)
 	defer tx.Discard()
 	item, err := tx.Get(id)
@@ -49,7 +42,7 @@ func (badgerDB BadgerDB) CheckConfigExists(id []byte) (bool, error) {
 }
 
 // AddSFTPEntry is for adding a SFTP Config entry.
-func (badgerDB BadgerDB) AddSFTPEntry(config *styxsftp.TransferConfig) error {
+func (badgerDB *BadgerDB) AddSFTPEntry(config *sftp.TransferConfig) error {
 	//if err := config.EncryptSecureFields(); err != nil {
 	//	return err
 	//}
@@ -72,7 +65,7 @@ func (badgerDB BadgerDB) AddSFTPEntry(config *styxsftp.TransferConfig) error {
 }
 
 // DeleteSFTPEntry takes the TransferID and deletes the corresponding config.
-func (badgerDB BadgerDB) DeleteSFTPEntry(id string) error {
+func (badgerDB *BadgerDB) DeleteSFTPEntry(id string) error {
 	err := badgerDB.ConfigDB.Update(func(txn *badger.Txn) error {
 		err := txn.Delete([]byte(id))
 		return err
@@ -81,11 +74,11 @@ func (badgerDB BadgerDB) DeleteSFTPEntry(id string) error {
 }
 
 // GetAll returns the entire configuration. TODO: use streams
-func (badgerDB BadgerDB) GetAll() ([]styxsftp.TransferConfig, error) {
-	id1 := styxsftp.TransferConfig{
+func (badgerDB *BadgerDB) GetAll() ([]sftp.TransferConfig, error) {
+	id1 := sftp.TransferConfig{
 		TransferID: "id1",
 	}
-	allConfig := []styxsftp.TransferConfig{}
+	allConfig := []sftp.TransferConfig{}
 	allConfig = append(allConfig, id1)
 	return allConfig, nil
 }
