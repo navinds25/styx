@@ -1,0 +1,9 @@
+node_config:
+  node_id: sftpsrv
+  node_type: 1
+  ipaddress: 127.0.0.1
+  grpc_port: 27777
+  sftp_port: 27778
+  envsec: 0
+  grpc_auth:
+  sftp_auth:

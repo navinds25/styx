@@ -7,8 +7,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/ScriptRock/crypto/ssh"
-	"github.com/ScriptRock/sftp"
 	log "github.com/sirupsen/logrus"
 )
 

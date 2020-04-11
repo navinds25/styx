@@ -1,21 +1,30 @@
 syntax = "proto3";
 
-package filetransferpb;
+package styxpb;
 
 //import weak "gogoproto/gogo.proto";
-import "filetransferevents.proto";
+import "node_config_events.proto";
+import "filetransfer_events.proto";
+import "execute_events.proto";
 
 //option go_package = "pkg/filetransfer";
 
-service FT {
+service NodeConfigService {
+    rpc AddNodeConfig(NodeConfig) returns(AddNodeConfigResponse);
+    rpc GetNodeConfigByID(NodeID) returns(NodeConfig);
+    rpc ListNodeConfig(ListNodeConfigRequest) returns(AllNodeConfig);
+}
+
+service FTService {
     rpc ListDir(RemoteDirectory) returns(stream RemoteFile);
     rpc ListDirCondition(RemoteDirectoryCondition) returns(stream RemoteFile);
+}
+
+service RemoteFTService {
     rpc TransferFile(RemoteDirectoryTransfer) returns(stream TransferStatus);
     rpc TransferCondition(RemoteDirectoryConditionTransfer) returns (stream TransferStatus);
 }
 
-service NodeConfig {
-    rpc AddNodeEntry(NodeEntry) returns();
-    rpc GetNodeEntry() returns();
-    rpc ListNodeEntries() returns();
+service ExecuteService {
 }
+

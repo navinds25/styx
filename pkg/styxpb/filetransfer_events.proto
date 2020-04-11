@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+package styxpb;
+
+
+//option go_package = "pkg/filetransfer";
+
+// filelistevents:
+message RemoteDirectory {
+    string source_path = 1;
+}
+
+message RemoteFile {
+    string sourcefile = 1;
+}
+
+message TimeValues {
+    int64 time_start = 1;
+    int64 time_end = 2;
+}
+
+message Condition {
+    enum ConditionType {
+        CONDITION_TYPE_UNSPECIFIED = 0;
+        TIME = 1;
+        TIME_RANGE = 2;
+        REGEX = 3;
+        GLOB = 4;
+    }
+    ConditionType condition_type = 1;
+    oneof condition_value {
+        TimeValues time_values = 2;
+        string pattern = 3;
+    }
+}
+
+message RemoteDirectoryCondition {
+    string source_path = 1;
+    repeated Condition condition = 2;
+}
+
+// filetransferevents
+message RemoteDirectoryTransfer {
+    enum TransferType {
+        TRANSFER_TYPE_UNSPECIFIED = 0;
+        PULL = 1;
+        PUSH = 2;
+    }
+    TransferType transfer_type = 1;
+    string source_path = 2;
+    string destination_path = 3;
+    string remote_server = 4;
+}
+
+message RemoteDirectoryConditionTransfer {
+    RemoteDirectoryTransfer remote_directory = 1;
+    Condition precondition = 2;
+}
+
+message TransferStatus {
+    string transferred_file = 1;
+}

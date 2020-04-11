@@ -1,6 +1,6 @@
 
-#STYX:
-# Goals of the project
+# STYX:
+## Goals of the project
 * Peer to peer file transfer application that meets compliance standards
 * Peer to peer health checks with leader election
 * Single binary for easy distribution
@@ -178,4 +178,19 @@ Each job consists of Actions in order to do so. These are the following actions
 - SFTP Username
 - SFTP Password
 
-### Job trigger:
+### Flow:
+
+* Setup:
+1. logging
+2. on styxnode, Cli -> NodeConfigSelf
+3. on styxmaster, add nodecofig of new node.
+4. styxmaster sends NodeConfig to styxnode
+
+* FTJobs:
+1. create new job config - (need to address this)
+2. add FTJob from styxmaster
+3. Determines add/run based on Trigger.
+ - Runjob: Determines job type, runs on appropriate styxnode
+ - Addjob: Determines job type, adds on appropriate styxnode
+
+* RunJob flow:

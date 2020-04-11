@@ -1,0 +1,70 @@
+syntax = "proto3";
+
+package styxpb;
+
+
+//option go_package = "pkg/filetransfer";
+
+// node config events
+message GRPCAuth {
+    string tls_cert = 1; // change to bytes ?
+    //string tls_key = 2; //change to bytes ?
+}
+
+message SFTPAuth {
+    enum SFTPAuthType {
+        SFTP_AUTH_TYPE_UNSPECIFIED = 0;
+        PASSWORD = 1;
+        KEYBASED = 2;
+        KEYPASSPHRASE = 3;
+    }
+    SFTPAuthType sftp_auth_type = 1;
+    string username = 2;
+    string password = 3;
+    string key = 4;
+}
+
+message NodeConfig {
+    string node_id = 1;
+    enum NodeType {
+        NODETYPE_UNSPECIFIED = 0;
+        INTERNAL = 1;
+        EXTERNAL = 2;
+    }
+    NodeType nodetype = 2;
+    string ip_address = 3;
+    string grpc_port = 4;
+    string sftp_port = 5;
+    enum EnvSec {
+        ENVSEC_UNSPECIFIED = 0;
+        DMZ = 1;
+        APPTIER = 2;
+        DATATIER = 3;
+        CONTROLPLANE = 4;
+    }
+    EnvSec env_sec = 6;
+    GRPCAuth grpc_auth = 7;
+    SFTPAuth sftp_auth = 8;
+    //string sftp_hostkey = 9; // change to bytes ?
+}
+
+message AddNodeConfigResponse {
+    string node_id = 1;
+    string node_entry_message = 2;
+    enum NodeEntryStatus {
+        STATUS_UNSPECIFIED = 0;
+        STATUS_SUCCESS = 1;
+        STATUS_ERROR = 2;
+    }
+    NodeEntryStatus node_entry_status = 3;
+}
+
+message NodeID {
+    string node_id = 1;
+}
+
+message ListNodeConfigRequest {}
+
+message AllNodeConfig {
+    repeated NodeConfig all_node_config = 1;
+}

@@ -1,23 +1,29 @@
-package styxdata
+package nodeconfig
 
-import (
-	"github.com/dgraph-io/badger"
-)
+import "github.com/dgraph-io/badger/v2"
 
 // BadgerDB is the DB instance for BadgerDB
 type BadgerDB struct {
-	ConfigDB *badger.DB
-	FilesDB  *badger.DB
+	NodeConfigDB *badger.DB
 }
 
-// DataStore is the struct containing the FilesDB and ConfigDB Interfaces.
+// DataStore is the struct containing the NodeConfigStore interface
 type DataStore struct {
-	Config ConfigStore
-	Files  FilesStore
+	NodeConfig Store
 }
 
 // Data is the instance of DataStore
 var Data DataStore
+
+// Store is the interface for all NodeConfig DB Actions
+type Store interface {
+	Close() error
+}
+
+// InitNodeConfigDB initializes the NodeConfigDB
+func InitNodeConfigDB(s Store) {
+	Data.NodeConfig = s
+}
 
 // Close close the database.
 func (badgerDB BadgerDB) Close() error {

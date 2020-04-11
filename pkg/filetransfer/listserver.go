@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/kr/fs"
-	pb "github.com/navinds25/styx/pkg/filetransferpb"
+	pb "github.com/navinds25/styx/pkg/styxpb"
 	"google.golang.org/grpc"
 )
 
@@ -16,7 +16,7 @@ type ListDirSender interface {
 }
 
 // ListDir implements grpc server function for listing a directory recursively and returning the files as a stream.
-func (s *FTServer) ListDir(in *pb.RemoteDirectory, stream pb.FT_ListDirServer) error {
+func (s *FTServer) ListDir(in *pb.RemoteDirectory, stream pb.FTService_ListDirServer) error {
 	listDirWalk(in.SourcePath, stream)
 	return nil
 }
