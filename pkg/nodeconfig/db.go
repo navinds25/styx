@@ -17,7 +17,9 @@ var Data DataStore
 
 // Store is the interface for all NodeConfig DB Actions
 type Store interface {
-	Close() error
+	AddHostConfigEntry(string, *HostConfigModel) error
+	GetHostConfigEntry(string) (*HostConfigModel, bool, error)
+	CloseDB() error
 }
 
 // InitNodeConfigDB initializes the NodeConfigDB
@@ -25,12 +27,9 @@ func InitNodeConfigDB(s Store) {
 	Data.NodeConfig = s
 }
 
-// Close close the database.
-func (badgerDB BadgerDB) Close() error {
-	if err := badgerDB.ConfigDB.Close(); err != nil {
-		return err
-	}
-	if err := badgerDB.FilesDB.Close(); err != nil {
+// CloseDB close the database.
+func (badgerDB BadgerDB) CloseDB() error {
+	if err := badgerDB.NodeConfigDB.Close(); err != nil {
 		return err
 	}
 	return nil

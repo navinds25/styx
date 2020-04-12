@@ -1,5 +1,14 @@
 package nodeconfig
 
+import (
+	"bytes"
+	"encoding/gob"
+	"strings"
+)
+
+// HostConfigKey is the key name for the hostconfig in the DB
+const HostConfigKey = "hostconfig"
+
 // HostConfigModel holds the configuration of the styxnode as stored in the db
 // this includes data the other styxnodes do not require for peer to peer communication
 type HostConfigModel struct {
@@ -32,9 +41,43 @@ type HostConfigModel struct {
 }
 
 // AddHostConfigEntry adds the HostConfigModel to DB
-func (badgerDB *BadgerDB) AddHostConfigEntry(id string, inModel *HostConfigModel) error {
+func (badgerDB BadgerDB) AddHostConfigEntry(id string, inModel *HostConfigModel) error {
+	key := strings.TrimSpace(id)
+	buf := bytes.Buffer{}
+	if err := gob.NewEncoder(&buf).Encode(inModel); err != nil {
+		return err
+	}
+	txn := badgerDB.NodeConfigDB.NewTransaction(true)
+	defer txn.Discard()
+	if err := txn.Set([]byte(key), buf.Bytes()); err != nil {
+		return err
+	}
+	if err := txn.Commit(); err != nil {
+		return err
+	}
 	return nil
 }
 
 // GetHostConfigEntry gets HostConfigModel by id
-func (badgerDB *BadgerDB) GetHostConfigEntry() (*HostConfigModel, error) { return nil, nil }
+// Returns entry, exists bool and error
+func (badgerDB BadgerDB) GetHostConfigEntry(id string) (outModel *HostConfigModel, exists bool, err error) {
+	txn := badgerDB.NodeConfigDB.NewTransaction(false)
+	defer txn.Discard()
+	item, err := txn.Get([]byte(id))
+	if err != nil {
+		if err.Error() != "ErrKeyNotFound" {
+			exists = true
+		}
+		return nil, exists, err
+	}
+	exists = true
+	tmpVal := []byte{}
+	tmpVal, err = item.ValueCopy(tmpVal)
+	if err != nil {
+		return nil, exists, err
+	}
+	if err := gob.NewDecoder(bytes.NewReader(tmpVal)).Decode(outModel); err != nil {
+		return nil, exists, err
+	}
+	return outModel, exists, nil
+}

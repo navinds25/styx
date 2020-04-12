@@ -29,8 +29,7 @@
 * Why not boltdb ? - BoltDB is a binary tree database and takes a lot more memory than an LSM database like BadgerDB.
 ### SFTP Server:
 #### Why have a seperate SFTP Server ? Why not use SSH ?
-* The developer of this application knows that software is not perfect and it is better for an application to fail than to lose access to a server.
-* Also, this comes in handy when implementing a network architecture with different security zones.
+* This is a cross platform application and will be difficult to handle on windows.
 
 ## Features:
 ### External SFTP Pull
@@ -112,21 +111,11 @@
   - [ ] external sftp
 
 
-
 ## Notes:
-* dep ensure/init does not work if the protobuf package is generated. Run make clean before dep ensure it runs to completion.
-
-Config -> Etcd/Consul -> Styx(Read full config in memory on change) -> Run Job
-Request -> Styx -> Run Job
 
 Handling Failures:
 Success -> BadgerDB
 Failure -> BadgerDB + Log + Alert
-
-
-Request Types:
-
-Config Types:
 
 
 ## Architecture:
@@ -177,6 +166,7 @@ Each job consists of Actions in order to do so. These are the following actions
 - GRPC Authentication ?
 - SFTP Username
 - SFTP Password
+
 
 ### Flow:
 

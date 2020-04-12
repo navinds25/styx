@@ -23,16 +23,17 @@ var SubAction string
 
 // MainFlags is a struct for the main cli flags
 type MainFlags struct {
-	SetupService     bool
-	DataDir          string
-	Debug            bool
-	Help             bool
-	Version          bool
-	InterfaceAddress string
-	GrpcPort         int
-	SftpPort         int
-	SSHHOSTKEY       string
-	Config           string
+	SetupService        bool
+	DataDir             string
+	Debug               bool
+	Help                bool
+	Version             bool
+	InterfaceAddress    string
+	GrpcPort            int
+	SftpPort            int
+	SSHHOSTKEY          string
+	Config              string
+	OverwriteHostConfig bool
 }
 
 var mainCliFlags = []cli.Flag{

@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package styxpb;
+package filetransfer;
 
 
 //option go_package = "pkg/filetransfer";

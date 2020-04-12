@@ -6,8 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/navinds25/styx/pkg/models"
-	pb "github.com/navinds25/styx/pkg/styxpb"
+	pb "github.com/navinds25/styx/api/nodeconfig"
 
 	"github.com/ghodss/yaml"
 )
@@ -41,6 +40,7 @@ type HostConfigInput struct {
 		HostkeyBinData []byte
 	} `json:"sftp_auth"`
 	ExternalAccess bool `json:"external_access"` // ExternalAccess indicates the styxnode is allowed to send files outside, eg: external sftp server
+	//Overwrite      bool `json:"overwrite"`
 }
 
 // HostConfigFromYAML returns a HostConfig from yaml
@@ -74,8 +74,8 @@ func HostConfigFromYAMLFile(filename string) (*HostConfigInput, error) {
 }
 
 // HostConfigToModel converts HostConfigInput to the Model
-func HostConfigToModel(hc *HostConfigInput) (*models.HostConfigModel, error) {
-	model := models.HostConfigModel(*hc)
+func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, error) {
+	model := HostConfigModel(*hc)
 	return &model, nil
 }
 
