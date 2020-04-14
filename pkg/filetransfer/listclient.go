@@ -7,7 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	pb "github.com/navinds25/styx/pkg/filetransferpb"
+	pb "github.com/navinds25/styx/api/filetransfer"
 )
 
 // ListFiles lists files on Remote Server

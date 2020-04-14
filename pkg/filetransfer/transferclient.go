@@ -4,7 +4,7 @@ import (
 	"context"
 	"io"
 
-	pb "github.com/navinds25/styx/pkg/styxpb"
+	pb "github.com/navinds25/styx/api/filetransfer"
 	log "github.com/sirupsen/logrus"
 )
 

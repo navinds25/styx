@@ -15,10 +15,8 @@ build:
 
 .PHONY: proto
 proto:
-	#cd pkg/filelistpb && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
-	#cd pkg/filetransferpb && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
-	#cd pkg/styxpb && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 	cd api/nodeconfig && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
+	cd api/filetransfer && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 
 .PHONY: clean
 clean:

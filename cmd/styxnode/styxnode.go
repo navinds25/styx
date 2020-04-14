@@ -7,6 +7,7 @@ import (
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/internal/setup"
 	"github.com/navinds25/styx/pkg/nodeconfig"
+	"github.com/navinds25/styx/pkg/sftp"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -20,7 +21,7 @@ func main() {
 	if err := appCli.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	hcM, lis, err := setup.NodeSetup()
+	_, lis, err := setup.NodeSetup()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,5 +36,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	setup.Services(grpcListener, sftpListener, hcM)
+	s := setup.RegisterGRPCServices()
+	go func() {
+		if err := s.Serve(grpcListener); err != nil {
+			log.Fatal(err)
+		}
+		defer s.GracefulStop()
+	}()
+
+	//go func() {
+	//	if err := sftpserver.ListenSFTPServer(sftpListener); err != nil {
+	//		log.Fatal(err)
+	//	}
+	//}()
+	if err := sftp.ListenSFTPServer(sftpListener); err != nil {
+		log.Fatal(err)
+	}
 }

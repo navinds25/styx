@@ -1,4 +1,4 @@
-package styxsftp
+package sftp
 
 import (
 	"io"
@@ -39,13 +39,13 @@ func (client *Client) Pull(inputfile, outputfile string) (int64, error) {
 	return bytesTransferred, nil
 }
 
-// Open is a wrapper around sftp Open function
-func (client *Client) Open(filepath string) (io.ReadWriteCloser, error) {
-	if client.CBC {
-		return client.CBCConn.Open(filepath)
-	}
-	return client.Conn.Open(filepath)
-}
+//// Open is a wrapper around sftp Open function
+//func (client *Client) Open(filepath string) (io.ReadWriteCloser, error) {
+//	if client.CBC {
+//		return client.CBCConn.Open(filepath)
+//	}
+//	return client.Conn.Open(filepath)
+//}
 
 func (client *Client) multiFilePull(wg *sync.WaitGroup, file SFTPFileStat, outputFile string) error {
 	defer wg.Done()

@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 
 	"github.com/kr/fs"
-	pb "github.com/navinds25/styx/pkg/styxpb"
+	pb "github.com/navinds25/styx/api/filetransfer"
 	"google.golang.org/grpc"
 )
 
@@ -22,7 +22,7 @@ func (s *FTServer) ListDir(in *pb.RemoteDirectory, stream pb.FTService_ListDirSe
 }
 
 // ListDirCondition lists a directory recursively and returns the files as a stream after evaluating a condition.
-func (s *FTServer) ListDirCondition(in *pb.RemoteDirectoryCondition, stream pb.FT_ListDirConditionServer) error {
+func (s *FTServer) ListDirCondition(in *pb.RemoteDirectoryCondition, stream pb.FTService_ListDirConditionServer) error {
 	listDirWalkCondition(in.SourcePath, stream, in.GetCondition())
 	return nil
 }

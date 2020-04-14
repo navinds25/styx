@@ -1,1 +1,1 @@
-package styxsftp
+package sftp
