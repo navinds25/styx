@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/dgraph-io/badger/v2"
-	"github.com/navinds25/styx/pkg/styxsftp"
+	"github.com/navinds25/styx/pkg/sftp"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -20,7 +20,7 @@ func InitFilesDB(s FilesStore) {
 // FilesStore is the main interface for the backend
 type FilesStore interface {
 	CheckFileExists([]byte) (bool, error)
-	AddFile(string, *styxsftp.TransferConfig) error
+	AddFile(string, *sftp.TransferConfig) error
 	GetFile() error
 	DeleteFile(string) error
 	CloseFilesDB() error
@@ -43,7 +43,7 @@ func (badgerDB BadgerDB) CheckFileExists(key []byte) (bool, error) {
 // AddFile adds a new file in the Files DB
 // Key is the full path of the destination file.
 // Value is TransferConfig for the file.
-func (badgerDB BadgerDB) AddFile(key string, value *styxsftp.TransferConfig) error {
+func (badgerDB BadgerDB) AddFile(key string, value *sftp.TransferConfig) error {
 	fileKey := strings.TrimSpace(key)
 	buf := bytes.Buffer{}
 	if err := gob.NewEncoder(&buf).Encode(value); err != nil {

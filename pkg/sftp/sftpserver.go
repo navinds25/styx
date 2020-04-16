@@ -1,4 +1,4 @@
-package styxsftp
+package sftp
 
 import (
 	"fmt"
@@ -7,7 +7,9 @@ import (
 	"net"
 	"os"
 
+	"github.com/pkg/sftp"
 	log "github.com/sirupsen/logrus"
+	"golang.org/x/crypto/ssh"
 )
 
 // GetSFTPConfig returns the config for the ssh/sftp server

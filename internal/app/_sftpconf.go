@@ -1,4 +1,4 @@
-package styxcli
+package app
 
 import (
 	"github.com/urfave/cli"

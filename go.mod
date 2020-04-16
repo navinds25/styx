@@ -3,12 +3,13 @@ module github.com/navinds25/styx
 go 1.12
 
 require (
-	github.com/dgraph-io/badger v1.6.1
 	github.com/dgraph-io/badger/v2 v2.0.3
+	github.com/dgraph-io/ristretto v0.0.2 // indirect
 	github.com/ghodss/yaml v1.0.0
 	github.com/golang/protobuf v1.3.2
 	github.com/google/go-cmp v0.4.0 // indirect
 	github.com/kr/fs v0.1.0
+	github.com/kr/pretty v0.2.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/sftp v1.11.0
 	github.com/sirupsen/logrus v1.4.2

@@ -1,4 +1,4 @@
-package styxsftp
+package sftp
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 
 // Client is a struct for client object + properties
 type Client struct {
-	Conn    *sftp.Client
+	Conn *sftp.Client
 }
 
 // Input is a struct for creating the sftp client

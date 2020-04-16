@@ -1,4 +1,4 @@
-package styxsftp
+package sftp
 
 import (
 	"bytes"

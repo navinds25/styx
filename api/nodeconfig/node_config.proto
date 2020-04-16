@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package nodeconfig;
+
+//import weak "gogoproto/gogo.proto";
+import "node_config_events.proto";
+
+//option go_package = "pkg/filetransfer";
+
+service NodeConfigService {
+    rpc AddNodeConfig(NodeConfig) returns(AddNodeConfigResponse);
+    rpc GetNodeConfigByID(NodeID) returns(NodeConfig);
+    rpc ListNodeConfig(ListNodeConfigRequest) returns(AllNodeConfig);
+}

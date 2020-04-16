@@ -23,16 +23,18 @@ var SubAction string
 
 // MainFlags is a struct for the main cli flags
 type MainFlags struct {
-	SetupService     bool
-	DataDir          string
-	Debug            bool
-	Help             bool
-	Version          bool
-	InterfaceAddress string
-	GrpcPort         int
-	SftpPort         int
-	SSHHOSTKEY       string
-	Config           string
+	SetupService        bool
+	DataDir             string
+	Debug               bool
+	Help                bool
+	Version             bool
+	InterfaceAddress    string
+	GrpcPort            int
+	SftpPort            int
+	SSHHOSTKEY          string
+	Config              string
+	OverwriteHostConfig bool
+	EncryptionKey       string
 }
 
 var mainCliFlags = []cli.Flag{
@@ -74,6 +76,11 @@ var mainCliFlags = []cli.Flag{
 		Value:       "nodeconfig.yml",
 		Destination: &MainFlagVal.Config,
 	},
+	cli.BoolFlag{
+		Name:        "overwrite-hostconfig",
+		Destination: &MainFlagVal.OverwriteHostConfig,
+	},
+	cli.StringFlag{Name: "encryption-key", Destination: &MainFlagVal.EncryptionKey},
 }
 
 // CliSetDefaults sets default values for empty cli flags.

@@ -3,3 +3,6 @@ ssh_host_rsa_key
 host_key
 docs/evive/*
 docs/ext_sftp_arch.png
+bin/**
+tools/dbtools/dbtools
+tools/dbtools/data/**
