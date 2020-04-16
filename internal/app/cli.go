@@ -34,6 +34,7 @@ type MainFlags struct {
 	SSHHOSTKEY          string
 	Config              string
 	OverwriteHostConfig bool
+	EncryptionKey       string
 }
 
 var mainCliFlags = []cli.Flag{
@@ -75,6 +76,11 @@ var mainCliFlags = []cli.Flag{
 		Value:       "nodeconfig.yml",
 		Destination: &MainFlagVal.Config,
 	},
+	cli.BoolFlag{
+		Name:        "overwrite-hostconfig",
+		Destination: &MainFlagVal.OverwriteHostConfig,
+	},
+	cli.StringFlag{Name: "encryption-key", Destination: &MainFlagVal.EncryptionKey},
 }
 
 // CliSetDefaults sets default values for empty cli flags.

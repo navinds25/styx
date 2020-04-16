@@ -9,7 +9,7 @@ import (
 )
 
 // PullFiles pulls files from remote sever onto current server.
-func PullFiles(ctx context.Context, ftclient pb.FTClient, remdir *pb.RemoteDirectory) error {
+func PullFiles(ctx context.Context, ftclient pb.FTServiceClient, remdir *pb.RemoteDirectory) error {
 	stream, err := ftclient.ListDir(ctx, remdir)
 	if err != nil {
 		return err

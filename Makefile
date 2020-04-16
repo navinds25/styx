@@ -5,7 +5,7 @@ CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
-all: clean proto fmt lint vet megacheck build cover
+all: clean proto tidy build
 
 .PHONY: build
 build:
@@ -18,9 +18,13 @@ proto:
 	cd api/nodeconfig && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 	cd api/filetransfer && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 
+.PHONY: tidy
+tidy:
+	go mod tidy
+
 .PHONY: clean
 clean:
-	find pkg -name *.pb.go -exec rm {} \;
+	find api -name *.pb.go -exec rm {} \;
 	rm -rfv bin | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
 
 .PHONY: test
@@ -38,10 +42,6 @@ lint:
 .PHONY: vet
 vet:
 	go vet $(shell go list ./... | grep -v vendor) | grep -v '.pb.go' | tee /dev/stderr
-
-.PHONY: megacheck
-megacheck:
-	megacheck $(shell go list ./... | grep -v vendor) | grep -v '.pb.go' | tee /dev/stderr
 
 .PHONY: hostkey
 hostkey:

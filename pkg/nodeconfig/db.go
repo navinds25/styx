@@ -18,7 +18,7 @@ var Data DataStore
 // Store is the interface for all NodeConfig DB Actions
 type Store interface {
 	AddHostConfigEntry(string, *HostConfigModel) error
-	GetHostConfigEntry(string) (*HostConfigModel, bool, error)
+	GetHostConfigEntry(string) (*HostConfigModel, error)
 	CloseDB() error
 }
 

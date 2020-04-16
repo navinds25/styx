@@ -7,7 +7,6 @@ import (
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/internal/setup"
 	"github.com/navinds25/styx/pkg/nodeconfig"
-	"github.com/navinds25/styx/pkg/sftp"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,17 +20,20 @@ func main() {
 	if err := appCli.Run(os.Args); err != nil {
 		log.Fatal(err)
 	}
-	_, lis, err := setup.NodeSetup()
+	hcM, err := setup.NodeSetup()
 	if err != nil {
 		log.Fatal(err)
 	}
+	log.Debug("main function, hcM val:", hcM)
+	log.Debug("grpcAddress:", hcM.GRPCAddress)
+	log.Debug("sftpAddress:", hcM.SFTPAddress)
 	defer nodeconfig.Data.NodeConfig.CloseDB()
-	grpcListener, err := net.Listen("tcp", lis.GRPCAddress)
+	grpcListener, err := net.Listen("tcp", hcM.GRPCAddress)
 	defer grpcListener.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
-	sftpListener, err := net.Listen("tcp", lis.SFTPAddress)
+	sftpListener, err := net.Listen("tcp", hcM.SFTPAddress)
 	defer sftpListener.Close()
 	if err != nil {
 		log.Fatal(err)
@@ -49,7 +51,7 @@ func main() {
 	//		log.Fatal(err)
 	//	}
 	//}()
-	if err := sftp.ListenSFTPServer(sftpListener); err != nil {
+	if err := setup.ServeSFTPServer(sftpListener); err != nil {
 		log.Fatal(err)
 	}
 }

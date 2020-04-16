@@ -11,7 +11,7 @@ import (
 )
 
 // ListFiles lists files on Remote Server
-func ListFiles(ctx context.Context, ftclient pb.FTClient, remdir *pb.RemoteDirectory) error {
+func ListFiles(ctx context.Context, ftclient pb.FTServiceClient, remdir *pb.RemoteDirectory) error {
 	stream, err := ftclient.ListDir(ctx, remdir)
 	if err != nil {
 		return err
@@ -30,7 +30,7 @@ func ListFiles(ctx context.Context, ftclient pb.FTClient, remdir *pb.RemoteDirec
 }
 
 // ListFilesCondition - needs input args refactoring required.
-func ListFilesCondition(ctx context.Context, ftclient pb.FTClient) error {
+func ListFilesCondition(ctx context.Context, ftclient pb.FTServiceClient) error {
 	duration, err := time.ParseDuration("1.5h")
 	if err != nil {
 		return err
@@ -39,10 +39,11 @@ func ListFilesCondition(ctx context.Context, ftclient pb.FTClient) error {
 	timeval := &pb.TimeValues{
 		TimeStart: startTime,
 	}
+
 	log.Println(startTime)
 	conditiontr := &pb.Condition{
-		ConditionType: pb.Condition_Time,
-		TimeValues:    timeval,
+		ConditionType:  pb.Condition_TIME,
+		ConditionValue: &pb.Condition_TimeValues{timeval},
 	}
 	conditions := []*pb.Condition{}
 	conditions = append(conditions, conditiontr)

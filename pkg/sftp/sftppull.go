@@ -10,8 +10,8 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// SFTPFileStat is for file info on a remote sftp file.
-type SFTPFileStat struct {
+// FileStat is for file info on a remote sftp file.
+type FileStat struct {
 	Path string
 	Stat os.FileInfo
 	Err  error
@@ -39,15 +39,15 @@ func (client *Client) Pull(inputfile, outputfile string) (int64, error) {
 	return bytesTransferred, nil
 }
 
-//// Open is a wrapper around sftp Open function
-//func (client *Client) Open(filepath string) (io.ReadWriteCloser, error) {
-//	if client.CBC {
-//		return client.CBCConn.Open(filepath)
-//	}
-//	return client.Conn.Open(filepath)
-//}
+// Open is a wrapper around sftp Open function
+func (client *Client) Open(filepath string) (io.ReadWriteCloser, error) {
+	//if client.CBC {
+	//	return client.CBCConn.Open(filepath)
+	//}
+	return client.Conn.Open(filepath)
+}
 
-func (client *Client) multiFilePull(wg *sync.WaitGroup, file SFTPFileStat, outputFile string) error {
+func (client *Client) multiFilePull(wg *sync.WaitGroup, file FileStat, outputFile string) error {
 	defer wg.Done()
 	input, err := client.Open(file.Path)
 	if err != nil {
@@ -69,9 +69,9 @@ func (client *Client) multiFilePull(wg *sync.WaitGroup, file SFTPFileStat, outpu
 }
 
 // MultiFilesPull is for pulling multiple files in parallel
-func (client *Client) MultiFilesPull(fileList chan SFTPFileStat, outputPath string, length int) chan SFTPFileStat {
+func (client *Client) MultiFilesPull(fileList chan FileStat, outputPath string, length int) chan FileStat {
 	var wg sync.WaitGroup
-	errChan := make(chan SFTPFileStat)
+	errChan := make(chan FileStat)
 	wg.Add(length)
 	defer wg.Wait()
 	go func() {
@@ -90,15 +90,15 @@ func (client *Client) MultiFilesPull(fileList chan SFTPFileStat, outputPath stri
 
 // Walk is a wrapper around the sftp walk function
 func (client *Client) Walk(rootDir string) *fs.Walker {
-	if client.CBC {
-		return client.CBCConn.Walk(rootDir)
-	}
+	//if client.CBC {
+	//	return client.CBCConn.Walk(rootDir)
+	//}
 	return client.Conn.Walk(rootDir)
 }
 
 // GetListOfFiles gets the list of files on a remote sftp server
-func (client *Client) GetListOfFiles(rootDir string) []SFTPFileStat {
-	arrayOfFiles := []SFTPFileStat{}
+func (client *Client) GetListOfFiles(rootDir string) []FileStat {
+	arrayOfFiles := []FileStat{}
 	walker := client.Walk(rootDir)
 	for walker.Step() {
 		if err := walker.Err(); err != nil {
@@ -108,7 +108,7 @@ func (client *Client) GetListOfFiles(rootDir string) []SFTPFileStat {
 		if stat.IsDir() {
 			continue
 		} else {
-			arrayOfFiles = append(arrayOfFiles, SFTPFileStat{
+			arrayOfFiles = append(arrayOfFiles, FileStat{
 				Stat: stat,
 				Path: walker.Path(),
 			})
@@ -119,8 +119,8 @@ func (client *Client) GetListOfFiles(rootDir string) []SFTPFileStat {
 
 // Stat is a wrapper around the the sftp Stat function
 func (client *Client) Stat(filename string) (os.FileInfo, error) {
-	if client.CBC {
-		return client.CBCConn.Stat(filename)
-	}
+	//if client.CBC {
+	//	return client.CBCConn.Stat(filename)
+	//}
 	return client.Conn.Stat(filename)
 }

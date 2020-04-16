@@ -1,26 +1,25 @@
 package setup
 
 import (
+	"encoding/base64"
+	"errors"
 	"os"
 	"path/filepath"
 
-	"github.com/dgraph-io/badger/v2"
+	badger "github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/pkg/nodeconfig"
 	log "github.com/sirupsen/logrus"
 )
-
-type ListenConfig struct {
-	GRPCAddress string
-	SFTPAddress string
-}
 
 func nodeConfigDB(dataRoot string) error {
 	nodeConfigDBPath := filepath.Join(dataRoot, "node_config")
 	if err := createDataDir(nodeConfigDBPath); err != nil {
 		return err
 	}
+	base64.StdEncoding.DecodeString(app.MainFlagVal.EncryptionKey)
 	dbOpts := badger.DefaultOptions(nodeConfigDBPath)
+	dbOpts.WithEncryptionKey([]byte(""))
 	nodeConfigDB, err := badger.Open(dbOpts)
 	if err != nil {
 		return err
@@ -55,46 +54,68 @@ func readHostConfigFromCli() (*nodeconfig.HostConfigInput, error) {
 	return nil, nil
 }
 
-func checkHostConfigExists() (*nodeconfig.HostConfigModel, error) {
-	// 1. check db for host config 2. check for overwrite flag
-	hcM, exists, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
-	if err != nil {
+func overwriteFromCli() (*nodeconfig.HostConfigModel, error) {
+	cliHC, err := readHostConfigFromCli()
+	if cliHC == nil || err != nil {
+		if cliHC == nil {
+			return nil, errors.New("cli didn't have any value")
+		}
 		return nil, err
 	}
-	// if 1 is absent and 2 is present -> write to db & send request to styxmaster
-	if !exists || app.MainFlagVal.OverwriteHostConfig {
-		if cliHC, err := readHostConfigFromCli(); cliHC != nil && err == nil {
-			hcM, err := nodeconfig.HostConfigToModel(cliHC)
-			if err != nil {
-				return nil, err
-			}
-			if err := nodeconfig.Data.NodeConfig.AddHostConfigEntry(nodeconfig.HostConfigKey, hcM); err != nil {
-				return nil, err
-			}
-			hcM, _, err = nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
-			if err != nil {
-				return hcM, err
-			}
-		}
+	hcM, err := nodeconfig.HostConfigToModel(cliHC)
+	if err != nil {
+		log.Debug("conversion of cli input to hostconfig model failed with ", err)
+		return nil, err
 	}
+	if err := nodeconfig.Data.NodeConfig.AddHostConfigEntry(nodeconfig.HostConfigKey, hcM); err != nil {
+		log.Debug("failed to add hostconfig entry to database ", err)
+		return nil, err
+	}
+	log.Debug("added entry")
+	dHcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
+	if err != nil {
+		log.Debug("failed to get hostconfig entry from database ", err)
+		return hcM, err
+	}
+	log.Debug("got entry from DB", dHcM)
+	return dHcM, nil
+}
+
+func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
+	if !app.MainFlagVal.OverwriteHostConfig {
+		hcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
+		if err != nil {
+			log.Error("error reading hostconfig")
+			return nil, err
+		}
+		log.Debugf("got hostconfig from db: %v", hcM)
+		return hcM, nil
+	}
+	hcM, err := overwriteFromCli()
+	if err != nil {
+		log.Error("error updating hostconfig", err)
+	}
+	log.Debugf("got hostconfig from db/overwrite: %v", hcM)
 	return hcM, nil
 }
 
 // NodeSetup is the main setup function
-func NodeSetup() (hcM *nodeconfig.HostConfigModel, lis *ListenConfig, err error) {
+func NodeSetup() (*nodeconfig.HostConfigModel, error) {
 	// read cli flags
-	app.MainFlagVal.CliSetDefaults()
+	if err := app.MainFlagVal.CliSetDefaults(); err != nil {
+		return nil, err
+	}
 
 	// setup dbs
 	if err := nodeConfigDB(app.MainFlagVal.DataDir); err != nil {
-		return hcM, lis, err
+		return nil, err
 	}
+	log.Debug("completed the db setup")
 	// get the hostconfig
-	hcM, err = checkHostConfigExists()
+	hcM, err := updateHostConfig()
 	if err != nil {
-		return hcM, lis, err
+		log.Error("error updating hostconfig", err)
+		return nil, err
 	}
-	lis.GRPCAddress = hcM.IPAddress + ":" + hcM.GrpcPort
-	lis.SFTPAddress = hcM.IPAddress + ":" + hcM.SftpPort
-	return hcM, lis, err
+	return hcM, nil
 }
