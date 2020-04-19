@@ -5,11 +5,14 @@ import (
 	"errors"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	badger "github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/pkg/nodeconfig"
 	log "github.com/sirupsen/logrus"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials"
 )
 
 func nodeConfigDB(dataRoot string) error {
@@ -17,9 +20,12 @@ func nodeConfigDB(dataRoot string) error {
 	if err := createDataDir(nodeConfigDBPath); err != nil {
 		return err
 	}
-	base64.StdEncoding.DecodeString(app.MainFlagVal.EncryptionKey)
-	dbOpts := badger.DefaultOptions(nodeConfigDBPath)
-	dbOpts.WithEncryptionKey([]byte(""))
+	encryptionKey, err := base64.StdEncoding.DecodeString(app.MainFlagVal.EncryptionKey)
+	if err != nil {
+		log.Error("Invalid encryption key", err)
+		return err
+	}
+	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithEncryptionKey(encryptionKey).WithLogger(nil)
 	nodeConfigDB, err := badger.Open(dbOpts)
 	if err != nil {
 		return err
@@ -54,13 +60,20 @@ func readHostConfigFromCli() (*nodeconfig.HostConfigInput, error) {
 	return nil, nil
 }
 
-func overwriteFromCli() (*nodeconfig.HostConfigModel, error) {
-	cliHC, err := readHostConfigFromCli()
-	if cliHC == nil || err != nil {
-		if cliHC == nil {
-			return nil, errors.New("cli didn't have any value")
+func readConfigFromCli() (*nodeconfig.ConfigInput, error) {
+	if app.MainFlagVal.Config != "" {
+		input, err := nodeconfig.ConfigFromYAMLFile(app.MainFlagVal.Config)
+		if err != nil {
+			return nil, err
 		}
-		return nil, err
+		return input, nil
+	}
+	return nil, nil
+}
+
+func overwriteFromCli(cliHC *nodeconfig.HostConfigInput) (*nodeconfig.HostConfigModel, error) {
+	if cliHC == nil {
+		return nil, errors.New("config didn't have any value")
 	}
 	hcM, err := nodeconfig.HostConfigToModel(cliHC)
 	if err != nil {
@@ -75,27 +88,55 @@ func overwriteFromCli() (*nodeconfig.HostConfigModel, error) {
 	dHcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
 	if err != nil {
 		log.Debug("failed to get hostconfig entry from database ", err)
-		return hcM, err
+		return dHcM, err
 	}
 	log.Debug("got entry from DB", dHcM)
 	return dHcM, nil
+}
+
+func addNode(mc *nodeconfig.MasterConfigInput) error {
+	if mc.MasterAddress == "" && mc.MasterIP != "" {
+		mc.MasterAddress = mc.MasterIP + ":" + strconv.Itoa(mc.GRPCPort)
+	}
+	conn, err := grpc.Dial(mc.MasterAddress, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	if err != nil {
+		log.Error("could not send request to master")
+	}
+	defer conn.Close()
+	if err := nodeconfig.AddNodeClient(conn); err != nil {
+		log.Error("error from AddNodeClient", err)
+	}
+
+	return nil
 }
 
 func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
 	if !app.MainFlagVal.OverwriteHostConfig {
 		hcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
 		if err != nil {
-			log.Error("error reading hostconfig")
+			log.Error("error reading hostconfig: ", err)
 			return nil, err
 		}
 		log.Debugf("got hostconfig from db: %v", hcM)
 		return hcM, nil
 	}
-	hcM, err := overwriteFromCli()
+	log.Debug("reading config from cli")
+	config, err := readConfigFromCli()
 	if err != nil {
-		log.Error("error updating hostconfig", err)
+		log.Error("error reading config", err)
+		return nil, err
+	}
+	log.Debugf("got config: %+v", config.HostConfig)
+	hcM, err := overwriteFromCli(config.HostConfig)
+	if err != nil {
+		log.Error("error updating hostconfig: ", err)
+		return nil, err
 	}
 	log.Debugf("got hostconfig from db/overwrite: %v", hcM)
+	if err := addNode(config.MasterConfig); err != nil {
+		log.Error("error adding node to cluster", err)
+		return nil, err
+	}
 	return hcM, nil
 }
 
@@ -114,7 +155,7 @@ func NodeSetup() (*nodeconfig.HostConfigModel, error) {
 	// get the hostconfig
 	hcM, err := updateHostConfig()
 	if err != nil {
-		log.Error("error updating hostconfig", err)
+		log.Error("error updating hostconfig: ", err)
 		return nil, err
 	}
 	return hcM, nil

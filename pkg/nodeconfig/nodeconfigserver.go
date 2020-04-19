@@ -23,3 +23,9 @@ func (ncs *Server) GetNodeConfigByID(ctx context.Context, in *pb.NodeID) (*pb.No
 func (ncs *Server) ListNodeConfig(ctx context.Context, in *pb.ListNodeConfigRequest) (*pb.AllNodeConfig, error) {
 	return &pb.AllNodeConfig{}, nil
 }
+
+// AddNode sends a request from a new node with the nodeconfig of itself
+// it returns a list of all the nodeconfigs present on the server node
+func (ncs *Server) AddNode(ctx context.Context, req *pb.NodeConfig) (*pb.AllNodeConfig, error) {
+	return &pb.AllNodeConfig{}, nil
+}

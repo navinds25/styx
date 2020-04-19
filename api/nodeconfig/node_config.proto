@@ -11,4 +11,5 @@ service NodeConfigService {
     rpc AddNodeConfig(NodeConfig) returns(AddNodeConfigResponse);
     rpc GetNodeConfigByID(NodeID) returns(NodeConfig);
     rpc ListNodeConfig(ListNodeConfigRequest) returns(AllNodeConfig);
+    rpc AddNode(NodeConfig) returns (AllNodeConfig);
 }

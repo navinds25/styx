@@ -1,10 +1,11 @@
-package nodeconfig
+package nodeconfig_test
 
 import (
 	"reflect"
 	"testing"
 
 	badger "github.com/dgraph-io/badger/v2"
+	"github.com/navinds25/styx/pkg/nodeconfig"
 )
 
 func TestBadgerDB_AddGetHostConfigEntry(t *testing.T) {
@@ -14,30 +15,30 @@ func TestBadgerDB_AddGetHostConfigEntry(t *testing.T) {
 	if err != nil {
 		t.Error("error creating db", err)
 	}
-	InitNodeConfigDB(BadgerDB{NodeConfigDB: ncdb})
+	nodeconfig.InitNodeConfigDB(nodeconfig.BadgerDB{NodeConfigDB: ncdb})
 	key := "test1"
-	value := &HostConfigModel{
+	value := &nodeconfig.HostConfigModel{
 		NodeID:    "test1",
 		NodeType:  "internal",
 		IPAddress: "127.0.0.1",
 		GRPCPort:  28888,
 		SFTPPort:  28889,
 		SZ:        "app",
-		SFTPAuth: SFTPAuthModel{
+		SFTPAuth: nodeconfig.SFTPAuthModel{
 			SFTPAuthType: "",
 			HostkeyFile:  "ssh_host_rsa_key",
 		},
 		ExternalAccess: true,
 	}
-	if err := Data.NodeConfig.AddHostConfigEntry(key, value); err != nil {
+	if err := nodeconfig.Data.NodeConfig.AddHostConfigEntry(key, value); err != nil {
 		t.Error("error adding data to db")
 	}
-	hcM, err := Data.NodeConfig.GetHostConfigEntry(key)
+	hcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(key)
 	if err != nil {
 		t.Error("error getting value from db")
 	}
-	if reflect.DeepEqual(hcM, value) {
-		t.Log("worked")
+	if !reflect.DeepEqual(hcM, value) {
+		t.FailNow()
 	}
 }
 

@@ -7,8 +7,6 @@ import (
 	"os"
 	"strconv"
 
-	pb "github.com/navinds25/styx/api/nodeconfig"
-
 	"github.com/ghodss/yaml"
 )
 
@@ -48,6 +46,8 @@ type HostConfigInput struct {
 	SFTPAuth       SFTPAuth `json:"sftp_auth,omitempty"`
 	ExternalAccess bool     `json:"external_access,omitempty"` // ExternalAccess indicates the styxnode is allowed to send files outside, eg: external sftp server
 	//Overwrite      bool `json:"overwrite"`
+	EncryptionKey string `json:"encryption_key"`
+	MasterAddress string `json:"master_address,omitempty"`
 }
 
 // HostConfigFromYAML returns a HostConfig from yaml
@@ -106,9 +106,4 @@ func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, error) {
 		SFTPAddress:    hc.IPAddress + ":" + strconv.Itoa(hc.SFTPPort),
 	}
 	return &model, nil
-}
-
-// HostConfigToNodeConfig takes a HostConfig and returns a NodeConfig
-func HostConfigToNodeConfig(*HostConfigInput) (*pb.NodeConfig, error) {
-	return &pb.NodeConfig{}, nil
 }
