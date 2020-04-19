@@ -24,20 +24,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Debug("main function, hcM val:", hcM)
-	log.Debug("grpcAddress:", hcM.GRPCAddress)
-	log.Debug("sftpAddress:", hcM.SFTPAddress)
+	log.Debug("main function, hcM val: ", hcM)
+	log.Debug("grpcAddress: ", hcM.GRPCAddress)
+	log.Debug("sftpAddress: ", hcM.SFTPAddress)
 	defer nodeconfig.Data.NodeConfig.CloseDB()
 	grpcListener, err := net.Listen("tcp", hcM.GRPCAddress)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer grpcListener.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
 	sftpListener, err := net.Listen("tcp", hcM.SFTPAddress)
-	defer sftpListener.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer sftpListener.Close()
 	s := setup.RegisterGRPCServices()
 	go func() {
 		if err := s.Serve(grpcListener); err != nil {

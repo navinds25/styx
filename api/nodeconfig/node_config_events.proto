@@ -28,33 +28,33 @@ message NodeConfig {
     string node_id = 1;
     enum NodeType {
         NODETYPE_UNSPECIFIED = 0;
-        INTERNAL = 1;
-        EXTERNAL = 2;
+        NODETYPE_MASTER = 1;
+        NODETYPE_NODE = 2;
+        NODETYPE_EXTERNAL = 3;
     }
     NodeType nodetype = 2;
-    string ip_address = 3;
-    string grpc_port = 4;
-    string sftp_port = 5;
-    enum EnvSec {
-        ENVSEC_UNSPECIFIED = 0;
-        DMZ = 1;
-        APPTIER = 2;
-        DATATIER = 3;
-        CONTROLPLANE = 4;
+    string grpc_address = 3;
+    string sftp_address = 4;
+    enum SZ {
+        SZ_UNSPECIFIED = 0;
+        SZ_EXTERNAL = 10;
+        SZ_DMZ = 20;
+        SZ_APP = 30;
+        SZ_DATA = 40;
+        SZ_CONTROLPLANE = 50;
     }
-    EnvSec env_sec = 6;
+    SZ sz = 6;
     GRPCAuth grpc_auth = 7;
     SFTPAuth sftp_auth = 8;
-    //string sftp_hostkey = 9; // change to bytes ?
 }
 
 message AddNodeConfigResponse {
     string node_id = 1;
     string node_entry_message = 2;
     enum NodeEntryStatus {
-        STATUS_UNSPECIFIED = 0;
-        STATUS_SUCCESS = 1;
-        STATUS_ERROR = 2;
+        NODE_ENTRY_STATUS_UNSPECIFIED = 0;
+        NODE_ENTRY_STATUS_SUCCESS = 1;
+        NODE_ENTRY_STATUS_ERROR = 2;
     }
     NodeEntryStatus node_entry_status = 3;
 }

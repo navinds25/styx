@@ -1,0 +1,13 @@
+host_config:
+  node_id: docker-styx2
+  node_type: node
+  ip_address: 192.168.28.12
+  grpc_port: 28888
+  sftp_port: 28889
+  sz: app
+  sftp_auth:
+    hostkey_file: /ssh_host_rsa_key #need to fix this field
+  external_access: false
+master_config:
+  master_ip: 192.168.28.13
+  grpc_port: 28888

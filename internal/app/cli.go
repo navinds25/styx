@@ -35,6 +35,8 @@ type MainFlags struct {
 	Config              string
 	OverwriteHostConfig bool
 	EncryptionKey       string
+	MasterIP            string
+	MasterPort          int
 }
 
 var mainCliFlags = []cli.Flag{
@@ -58,12 +60,12 @@ var mainCliFlags = []cli.Flag{
 	},
 	cli.IntFlag{
 		Name:        "grpcport",
-		Value:       28889,
+		Value:       28888,
 		Destination: &MainFlagVal.GrpcPort,
 	},
 	cli.IntFlag{
 		Name:        "sftpport",
-		Value:       28888,
+		Value:       28889,
 		Destination: &MainFlagVal.SftpPort,
 	},
 	cli.StringFlag{
@@ -80,7 +82,20 @@ var mainCliFlags = []cli.Flag{
 		Name:        "overwrite-hostconfig",
 		Destination: &MainFlagVal.OverwriteHostConfig,
 	},
-	cli.StringFlag{Name: "encryption-key", Destination: &MainFlagVal.EncryptionKey},
+	cli.StringFlag{
+		Name:        "encryption-key",
+		Destination: &MainFlagVal.EncryptionKey,
+	},
+	cli.StringFlag{
+		Name:        "master-ip",
+		Value:       "127.0.0.1",
+		Destination: &MainFlagVal.MasterIP,
+	},
+	cli.IntFlag{
+		Name:        "master-port",
+		Value:       28888,
+		Destination: &MainFlagVal.MasterPort,
+	},
 }
 
 // CliSetDefaults sets default values for empty cli flags.

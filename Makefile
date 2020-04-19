@@ -29,7 +29,7 @@ clean:
 
 .PHONY: test
 test:
-	go test -race github.com/navinds25/maitre/pkg/saltfunc/
+	go test -v -race github.com/navinds25/styx/pkg/nodeconfig...
 
 .PHONY: fmt
 fmt:
