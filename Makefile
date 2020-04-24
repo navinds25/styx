@@ -5,7 +5,7 @@ CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
-all: clean tidy proto build
+all: proto build
 
 .PHONY: build
 build:
