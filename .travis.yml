@@ -5,3 +5,8 @@ go:
 
 before_install:
   - ./build/install-protobuf.sh
+
+install: true
+
+script:
+  - env GO111MODULE=on make
