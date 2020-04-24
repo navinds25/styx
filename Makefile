@@ -13,10 +13,15 @@ build:
 	cd bin && go build ${GO_LDFLAGS} ../cmd/styxnode/styxnode.go
 	cd bin && go build ${GO_LDFLAGS} ../cmd/styxmaster/styxmaster.go
 
+.PHONY: local-docker
+local-docker:
+	cd build && ./build_docker.sh
+
 .PHONY: proto
 proto:
 	cd api/nodeconfig && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 	cd api/filetransfer && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
+	cd tools/certificates && ./generate_certs.sh
 
 .PHONY: tidy
 tidy:
@@ -26,6 +31,7 @@ tidy:
 clean:
 	find api -name *.pb.go -exec rm {} \;
 	rm -rfv bin | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
+	find . -type f \( -name "*.pem" -o -name "*.csr" -o -name "host_key" \) -exec rm {} \;
 
 .PHONY: test
 test:

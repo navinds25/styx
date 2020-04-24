@@ -38,7 +38,10 @@ func main() {
 		log.Fatal(err)
 	}
 	defer sftpListener.Close()
-	s := setup.RegisterGRPCServices()
+	s, err := setup.RegisterGRPCServices(hcM.GRPCAuth)
+	if err != nil {
+		log.Fatal(err)
+	}
 	go func() {
 		if err := s.Serve(grpcListener); err != nil {
 			log.Fatal(err)

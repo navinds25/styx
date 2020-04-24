@@ -17,6 +17,7 @@ type GRPCAuthModel struct {
 	TLSKeyFile     string
 	TLSKeyData     string
 	TLSKeyBinData  []byte
+	Token          string
 }
 
 // SFTPAuthModel is the sub config for SFTP Auth details
@@ -41,8 +42,8 @@ type HostConfigModel struct {
 	GRPCPort       int
 	SFTPPort       int
 	SZ             string // SZ indicates the security zone, eg: dmz or control plane
-	GRPCAuth       GRPCAuthModel
-	SFTPAuth       SFTPAuthModel
+	GRPCAuth       *GRPCAuthModel
+	SFTPAuth       *SFTPAuthModel
 	ExternalAccess bool // ExternalAccess indicates the styxnode is allowed to send files outside, eg: external sftp server
 	GRPCAddress    string
 	SFTPAddress    string

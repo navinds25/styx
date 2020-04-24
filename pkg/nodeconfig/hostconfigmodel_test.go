@@ -24,7 +24,7 @@ func TestBadgerDB_AddGetHostConfigEntry(t *testing.T) {
 		GRPCPort:  28888,
 		SFTPPort:  28889,
 		SZ:        "app",
-		SFTPAuth: nodeconfig.SFTPAuthModel{
+		SFTPAuth: &nodeconfig.SFTPAuthModel{
 			SFTPAuthType: "",
 			HostkeyFile:  "ssh_host_rsa_key",
 		},

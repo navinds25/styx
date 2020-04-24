@@ -5,8 +5,12 @@ host_config:
   grpc_port: 28888
   sftp_port: 28889
   sz: dmz
+  grpc_auth:
+    tls_cert_file: styxnode.pem
+    tls_key_file: styxnode-key.pem
+    token: "12345"
   sftp_auth:
-    hostkey_file: /ssh_host_rsa_key #need to fix this field
+    hostkey_file: host_key #need to fix this field
   external_access: false
 master_config:
   master_ip: 192.168.28.13
