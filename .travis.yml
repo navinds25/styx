@@ -9,4 +9,4 @@ before_install:
 install: true
 
 script:
-  - env GO111MODULE=on make
+  - env GO111MODULE=on make all
