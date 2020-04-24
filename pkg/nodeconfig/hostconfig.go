@@ -18,6 +18,7 @@ type GRPCAuth struct {
 	TLSKeyFile     string `json:"tls_key_file,omitempty"`
 	TLSKeyData     string `json:"tls_key_data,omitempty"`
 	TLSKeyBinData  []byte `json:"tls_key_bin_data,omitempty"`
+	Token          string `json:"token,omitempty"`
 }
 
 // SFTPAuth is the sub config for SFTP Auth details
@@ -90,11 +91,11 @@ func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, error) {
 		GRPCPort:  hc.GRPCPort,
 		SFTPPort:  hc.SFTPPort,
 		SZ:        hc.SZ,
-		GRPCAuth: GRPCAuthModel{
+		GRPCAuth: &GRPCAuthModel{
 			TLSCertFile: hc.GRPCAuth.TLSCertFile,
 			TLSKeyFile:  hc.GRPCAuth.TLSKeyFile,
 		},
-		SFTPAuth: SFTPAuthModel{
+		SFTPAuth: &SFTPAuthModel{
 			SFTPAuthType: hc.SFTPAuth.SFTPAuthType,
 			Username:     hc.SFTPAuth.Username, Password: hc.SFTPAuth.Password,
 			KeyFile:     hc.SFTPAuth.KeyFile,

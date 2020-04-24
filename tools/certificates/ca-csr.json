@@ -1,0 +1,14 @@
+{
+    "CN": "styx",
+    "key": {
+        "algo": "rsa",
+        "size": 2048
+    },
+    "names": [{
+        "C": "India",
+        "L": "Bangalore",
+        "O": "Styx",
+        "OU": "Security",
+        "ST": "KA"
+    }]
+}

@@ -1,8 +1,10 @@
 package setup
 
 import (
+	"crypto/x509"
 	"encoding/base64"
 	"errors"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -94,17 +96,35 @@ func overwriteFromCli(cliHC *nodeconfig.HostConfigInput) (*nodeconfig.HostConfig
 	return dHcM, nil
 }
 
-func addNode(mc *nodeconfig.MasterConfigInput) error {
+func addNode(mc *nodeconfig.MasterConfigInput, certFile string) error {
 	if mc.MasterAddress == "" && mc.MasterIP != "" {
 		mc.MasterAddress = mc.MasterIP + ":" + strconv.Itoa(mc.GRPCPort)
 	}
-	conn, err := grpc.Dial(mc.MasterAddress, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(nil, "")))
+	certPool := x509.NewCertPool()
+	certFD, err := os.Open(certFile)
+	if err != nil {
+		log.Error("error opening tlscert", err)
+		return err
+	}
+	cert, err := ioutil.ReadAll(certFD)
+	if err != nil {
+		log.Error("error reading tlscert: ", err)
+		return err
+	}
+	status := certPool.AppendCertsFromPEM(cert)
+	if !status {
+		log.Error("certificate pool could not be updated")
+		return err
+	}
+	conn, err := grpc.Dial(mc.MasterAddress, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(certPool, "")))
 	if err != nil {
 		log.Error("could not send request to master")
+		return err
 	}
 	defer conn.Close()
 	if err := nodeconfig.AddNodeClient(conn); err != nil {
 		log.Error("error from AddNodeClient", err)
+		return err
 	}
 
 	return nil
@@ -114,7 +134,7 @@ func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
 	if !app.MainFlagVal.OverwriteHostConfig {
 		hcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
 		if err != nil {
-			log.Error("error reading hostconfig: ", err)
+			log.Error("error reading hostconfig, overwrite is not passed: ", err)
 			return nil, err
 		}
 		log.Debugf("got hostconfig from db: %v", hcM)
@@ -133,9 +153,9 @@ func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
 		return nil, err
 	}
 	log.Debugf("got hostconfig from db/overwrite: %v", hcM)
-	if err := addNode(config.MasterConfig); err != nil {
+	if err := addNode(config.MasterConfig, hcM.GRPCAuth.TLSCertFile); err != nil {
 		log.Error("error adding node to cluster", err)
-		return nil, err
+		//return nil, err
 	}
 	return hcM, nil
 }
