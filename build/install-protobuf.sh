@@ -7,4 +7,3 @@ unzip protoc-3.11.4-linux-x86_64.zip
 sudo cp -r include/* /usr/bin/include/
 sudo cp -r bin/* /usr/bin/
 go get github.com/golang/protobuf@v1.4.0
-echo "gopath is:${GOPATH}"

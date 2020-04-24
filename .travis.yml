@@ -5,7 +5,7 @@ go:
 
 before_install:
   - ./build/install-protobuf.sh
-
+  - export PATH=$PATH:$GOPATH/bin
 install: true
 
 script:
