@@ -6,6 +6,7 @@ go:
 before_install:
   - ./build/install-protobuf.sh
   - export PATH=$PATH:$GOPATH/bin
+  - go mod download
 install: true
 
 script:
