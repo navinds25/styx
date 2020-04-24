@@ -1,9 +1,7 @@
 syntax = "proto3";
 
 package nodeconfig;
-
-
-//option go_package = "pkg/filetransfer";
+option go_package = ".;nodeconfig";
 
 // node config events
 message GRPCAuth {
