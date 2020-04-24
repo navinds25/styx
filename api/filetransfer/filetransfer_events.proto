@@ -1,9 +1,7 @@
 syntax = "proto3";
 
 package filetransfer;
-
-
-//option go_package = "pkg/filetransfer";
+option go_package = ".;filetransfer";
 
 // filelistevents:
 message RemoteDirectory {

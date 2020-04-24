@@ -1,11 +1,11 @@
 syntax = "proto3";
 
 package filetransfer;
+option go_package = ".;filetransfer";
 
 //import weak "gogoproto/gogo.proto";
 import "filetransfer_events.proto";
 
-//option go_package = "pkg/filetransfer";
 
 service FTService {
     rpc ListDir(RemoteDirectory) returns(stream RemoteFile);
