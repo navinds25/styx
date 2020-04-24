@@ -5,7 +5,7 @@ CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
 
-all: clean proto tidy build
+all: clean tidy proto build
 
 .PHONY: build
 build:
@@ -21,17 +21,18 @@ local-docker:
 proto:
 	cd api/nodeconfig && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
 	cd api/filetransfer && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
-	cd tools/certificates && ./generate_certs.sh
 
-.PHONY: tidy
-tidy:
-	go mod tidy
+.PHONY: certs
+certs:
+	cd tools/certificates && ./generate_certs.sh
 
 .PHONY: clean
 clean:
 	find api -name *.pb.go -exec rm {} \;
 	rm -rfv bin | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
+	rm -v coverage.txt | tee /dev/stderr;
 	find . -type f \( -name "*.pem" -o -name "*.csr" -o -name "host_key" \) -exec rm {} \;
+	go mod tidy
 
 .PHONY: test
 test:
@@ -40,23 +41,8 @@ test:
 .PHONY: fmt
 fmt:
 	gofmt -s -l . | grep -v '.pb.go' | grep -v vendor | tee /dev/stderr
-
-.PHONY: lint
-lint:
 	golint ./... | grep -v '.pb.go' | grep -v vendor | tee /dev/stderr
-
-.PHONY: vet
-vet:
 	go vet $(shell go list ./... | grep -v vendor) | grep -v '.pb.go' | tee /dev/stderr
-
-.PHONY: hostkey
-hostkey:
-	mkdir -p etc/ssh/
-	ssh-keygen -A -f ${CWD}
-
-.PHONY: sshkey
-sshkey:
-	ssh-keygen -t rsa -N "" -f host_key && rm -v host_key.pub
 
 .PHONY: cover
 cover: ## Runs go test with coverage

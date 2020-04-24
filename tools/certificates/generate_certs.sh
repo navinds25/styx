@@ -25,3 +25,6 @@ function sshkey() {
 
 certs
 sshkey
+
+#	ssh-keygen -A -f ${CWD}
+# ssh-keygen -t rsa -N "" -f host_key && rm -v host_key.pub
