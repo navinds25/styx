@@ -4,6 +4,7 @@ BUILD=$(shell echo "${BUILDNUMBER}")
 CWD=$(shell pwd)
 NAME=styx
 GO_LDFLAGS=-ldflags "-X main.Version=build="$(BUILD)"|commit="$(COMMIT)"|date="$(DATE)""
+PBDIR=${CWD}/api
 
 all: proto build
 
@@ -19,8 +20,10 @@ local-docker:
 
 .PHONY: proto
 proto:
-	cd api/nodeconfig && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
-	cd api/filetransfer && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto
+	@for pb in $(shell ls ${PBDIR}); do \
+		cd ${PBDIR}/$${pb} && protoc -I. --go_out=plugins=grpc,paths=source_relative:. *.proto ;\
+	done
+	@echo "generated pb.go files"
 
 .PHONY: certs
 certs:

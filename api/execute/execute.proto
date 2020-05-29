@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package execute;
+option go_package = ".;execute";
+
+service ExecuteService{
+    rpc Run(Executable) returns(Output);
+}
+
+message Executable {
+    string command = 1;
+    repeated string arguments = 2;
+}
+
+message Output {
+    string output = 1;
+    string error = 2;
+}
