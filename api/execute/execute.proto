@@ -5,6 +5,7 @@ option go_package = ".;execute";
 
 service ExecuteService{
     rpc Run(Executable) returns(Output);
+    rpc RunStreamOutput(Executable) returns(stream Output);
 }
 
 message Executable {

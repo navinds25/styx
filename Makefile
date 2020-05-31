@@ -35,7 +35,6 @@ clean:
 	rm -rfv bin | tee /dev/stderr ; rm -v styx.log | tee /dev/stderr
 	rm -v coverage.txt | tee /dev/stderr;
 	find . -type f \( -name "*.pem" -o -name "*.csr" -o -name "host_key" \) -exec rm {} \;
-	go mod tidy
 
 .PHONY: test
 test:

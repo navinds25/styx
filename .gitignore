@@ -8,3 +8,4 @@ tools/dbtools/dbtools
 tools/dbtools/data/**
 *.pem
 *.csr
+main.go
