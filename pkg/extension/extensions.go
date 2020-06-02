@@ -1,6 +1,8 @@
 package extension
 
 import (
+	"github.com/navinds25/EviveInDesignServer/pkg/pdf"
+	"github.com/navinds25/EviveInDesignServer/pkg/splitter"
 )
 
 // Impl is the interface for all Extensions
@@ -15,8 +17,8 @@ var Directory map[string]Impl
 // LoadExtensions loads extensions, must be called at startup
 func LoadExtensions() error {
 	directory := make(map[string]Impl)
-	//directory["PDF"] = &pdf.Extension{}
-	//directory["SPLITTER"] = &splitter.Extension{}
+	directory["PDF"] = &pdf.Extension{}
+	directory["SPLITTER"] = &splitter.Extension{}
 	Directory = directory
 	return nil
 }
