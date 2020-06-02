@@ -1,7 +1,7 @@
 host_config:
   node_id: localhost
   node_type: dmz
-  ip_address: 127.0.0.1
+  ip_address: 0.0.0.0
   grpc_port: 28888
   sftp_port: 28889
   sz: dmz
@@ -10,7 +10,8 @@ host_config:
     tls_key_file: styxnode-key.pem
     token: "12345"
   sftp_auth:
-    hostkey_file: configs/ssh_host_rsa_key #need to fix this field
+    #hostkey_file: configs/ssh_host_rsa_key #need to fix this field
+    hostkey_file: host_key #need to fix this field
   external_access: false
 master_config:
   master_ip: 127.0.0.1

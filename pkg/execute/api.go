@@ -22,6 +22,6 @@ func (ps *Server) Run(ctx context.Context, in *pb.Executable) (*pb.Output, error
 }
 
 // RunStreamOutput executes a command and streams the output of the command back to the client
-func (ps *Server) RunStreamOutput(ctx context.Context, in *pb.Executable, out *pb.ExecuteService_RunStreamOutputServer) error {
+func (ps *Server) RunStreamOutput(in *pb.Executable, out pb.ExecuteService_RunStreamOutputServer) error {
 	return nil
 }

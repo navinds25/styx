@@ -9,7 +9,7 @@ function certs() {
       -ca=ca.pem \
       -ca-key=ca-key.pem \
       -config=ca-config.json \
-      -hostname=192.168.28.11,192.168.28.12,192.168.28.13 \
+      -hostname=localhost,127.0.0.1,192.168.28.11,192.168.28.12,192.168.28.13 \
       -profile=styx \
       styxnode-csr.json | cfssljson -bare styxnode
   fi

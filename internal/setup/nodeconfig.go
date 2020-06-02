@@ -27,7 +27,7 @@ func nodeConfigDB(dataRoot string) error {
 		log.Error("Invalid encryption key", err)
 		return err
 	}
-	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithEncryptionKey(encryptionKey).WithLogger(nil)
+	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithTruncate(true).WithEncryptionKey(encryptionKey).WithLogger(nil)
 	nodeConfigDB, err := badger.Open(dbOpts)
 	if err != nil {
 		return err
