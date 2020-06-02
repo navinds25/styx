@@ -4,7 +4,7 @@ package extension;
 option go_package = ".;extension";
 
 service ExtensionService{
-    rpc ExecuteExtension(ExecuteExtensionParams) returns(stream ExecuteExtensionOutput);
+    rpc ExecuteExtension(ExecuteExtensionParams) returns(ExecuteExtensionOutput);
 }
 
 message ExecuteExtensionParams {
