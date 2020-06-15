@@ -37,7 +37,7 @@ func AddNodeClient(conn *grpc.ClientConn) error {
 	if err != nil {
 		return err
 	}
-	log.Info("Got list of nodeconfigs: %+v", allnc)
+	log.Infof("Got list of nodeconfigs: %+v", allnc)
 	return nil
 }
 
