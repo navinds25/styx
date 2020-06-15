@@ -2,53 +2,16 @@ package setup
 
 import (
 	"crypto/x509"
-	"encoding/base64"
 	"errors"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 
-	badger "github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/pkg/nodeconfig"
 	log "github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
-
-func nodeConfigDB(dataRoot string) error {
-	nodeConfigDBPath := filepath.Join(dataRoot, "node_config")
-	if err := createDataDir(nodeConfigDBPath); err != nil {
-		return err
-	}
-	encryptionKey, err := base64.StdEncoding.DecodeString(app.MainFlagVal.EncryptionKey)
-	if err != nil {
-		log.Error("Invalid encryption key", err)
-		return err
-	}
-	// WithTruncate is needed for windows
-	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithTruncate(true).WithEncryptionKey(encryptionKey).WithLogger(nil)
-	nodeConfigDB, err := badger.Open(dbOpts)
-	if err != nil {
-		return err
-	}
-	nodeconfig.InitNodeConfigDB(nodeconfig.BadgerDB{
-		NodeConfigDB: nodeConfigDB,
-	})
-	return nil
-}
-
-func createDataDir(datadir string) error {
-	log.Debug("datadir:", datadir)
-	_, err := os.Stat(datadir)
-	if os.IsNotExist(err) {
-		if err := os.MkdirAll(datadir, 0755); err != nil {
-			return err
-		}
-		log.Info("created data directory: ", datadir)
-	}
-	return nil
-}
 
 // logic for this is weird but correct as it accounts for default value in Cli.
 func readHostConfigFromCli() (*nodeconfig.HostConfigInput, error) {
@@ -171,9 +134,8 @@ func NodeSetup() (*nodeconfig.HostConfigModel, error) {
 	if err := app.MainFlagVal.CliSetDefaults(); err != nil {
 		return nil, err
 	}
-
 	// setup dbs
-	if err := nodeConfigDB(app.MainFlagVal.DataDir); err != nil {
+	if err := DBsetup(app.MainFlagVal.DataDir); err != nil {
 		return nil, err
 	}
 	log.Debug("completed the db setup")
