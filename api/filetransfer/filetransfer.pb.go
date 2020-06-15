@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -43,11 +45,11 @@ var fileDescriptor_85d5b4bd112d6203 = []byte{
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // FTServiceClient is the client API for FTService service.
 //
@@ -58,10 +60,10 @@ type FTServiceClient interface {
 }
 
 type fTServiceClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewFTServiceClient(cc *grpc.ClientConn) FTServiceClient {
+func NewFTServiceClient(cc grpc.ClientConnInterface) FTServiceClient {
 	return &fTServiceClient{cc}
 }
 
@@ -133,6 +135,17 @@ func (x *fTServiceListDirConditionClient) Recv() (*RemoteFile, error) {
 type FTServiceServer interface {
 	ListDir(*RemoteDirectory, FTService_ListDirServer) error
 	ListDirCondition(*RemoteDirectoryCondition, FTService_ListDirConditionServer) error
+}
+
+// UnimplementedFTServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedFTServiceServer struct {
+}
+
+func (*UnimplementedFTServiceServer) ListDir(req *RemoteDirectory, srv FTService_ListDirServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListDir not implemented")
+}
+func (*UnimplementedFTServiceServer) ListDirCondition(req *RemoteDirectoryCondition, srv FTService_ListDirConditionServer) error {
+	return status.Errorf(codes.Unimplemented, "method ListDirCondition not implemented")
 }
 
 func RegisterFTServiceServer(s *grpc.Server, srv FTServiceServer) {
@@ -209,10 +222,10 @@ type RemoteFTServiceClient interface {
 }
 
 type remoteFTServiceClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewRemoteFTServiceClient(cc *grpc.ClientConn) RemoteFTServiceClient {
+func NewRemoteFTServiceClient(cc grpc.ClientConnInterface) RemoteFTServiceClient {
 	return &remoteFTServiceClient{cc}
 }
 
@@ -284,6 +297,17 @@ func (x *remoteFTServiceTransferConditionClient) Recv() (*TransferStatus, error)
 type RemoteFTServiceServer interface {
 	TransferFile(*RemoteDirectoryTransfer, RemoteFTService_TransferFileServer) error
 	TransferCondition(*RemoteDirectoryConditionTransfer, RemoteFTService_TransferConditionServer) error
+}
+
+// UnimplementedRemoteFTServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedRemoteFTServiceServer struct {
+}
+
+func (*UnimplementedRemoteFTServiceServer) TransferFile(req *RemoteDirectoryTransfer, srv RemoteFTService_TransferFileServer) error {
+	return status.Errorf(codes.Unimplemented, "method TransferFile not implemented")
+}
+func (*UnimplementedRemoteFTServiceServer) TransferCondition(req *RemoteDirectoryConditionTransfer, srv RemoteFTService_TransferConditionServer) error {
+	return status.Errorf(codes.Unimplemented, "method TransferCondition not implemented")
 }
 
 func RegisterRemoteFTServiceServer(s *grpc.Server, srv RemoteFTServiceServer) {

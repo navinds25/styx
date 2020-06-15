@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -142,11 +144,11 @@ var fileDescriptor_58179d2e1720ec81 = []byte{
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // ExecuteServiceClient is the client API for ExecuteService service.
 //
@@ -157,10 +159,10 @@ type ExecuteServiceClient interface {
 }
 
 type executeServiceClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewExecuteServiceClient(cc *grpc.ClientConn) ExecuteServiceClient {
+func NewExecuteServiceClient(cc grpc.ClientConnInterface) ExecuteServiceClient {
 	return &executeServiceClient{cc}
 }
 
@@ -209,6 +211,17 @@ func (x *executeServiceRunStreamOutputClient) Recv() (*Output, error) {
 type ExecuteServiceServer interface {
 	Run(context.Context, *Executable) (*Output, error)
 	RunStreamOutput(*Executable, ExecuteService_RunStreamOutputServer) error
+}
+
+// UnimplementedExecuteServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedExecuteServiceServer struct {
+}
+
+func (*UnimplementedExecuteServiceServer) Run(ctx context.Context, req *Executable) (*Output, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Run not implemented")
+}
+func (*UnimplementedExecuteServiceServer) RunStreamOutput(req *Executable, srv ExecuteService_RunStreamOutputServer) error {
+	return status.Errorf(codes.Unimplemented, "method RunStreamOutput not implemented")
 }
 
 func RegisterExecuteServiceServer(s *grpc.Server, srv ExecuteServiceServer) {

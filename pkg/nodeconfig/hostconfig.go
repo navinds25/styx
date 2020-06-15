@@ -37,7 +37,7 @@ type SFTPAuth struct {
 // HostConfigInput holds the yaml configuration of the styxnode from user input/config file
 // this includes data the other styxnodes do not require for peer to peer communication
 type HostConfigInput struct {
-	NodeID         string   `json:"node_id,omitempty"`   // NodeID is unique identifier for a styxnode
+	NodeID         string   `json:"node_id"`             // NodeID is unique identifier for a styxnode
 	NodeType       string   `json:"node_type,omitempty"` // NodeType indicates if it's a internal/external node
 	IPAddress      string   `json:"ip_address,omitempty"`
 	GRPCPort       int      `json:"grpc_port,omitempty"`
@@ -47,8 +47,8 @@ type HostConfigInput struct {
 	SFTPAuth       SFTPAuth `json:"sftp_auth,omitempty"`
 	ExternalAccess bool     `json:"external_access,omitempty"` // ExternalAccess indicates the styxnode is allowed to send files outside, eg: external sftp server
 	//Overwrite      bool `json:"overwrite"`
-	EncryptionKey string `json:"encryption_key"`
-	MasterAddress string `json:"master_address,omitempty"`
+	EncryptionKey string            `json:"encryption_key"`
+	MasterConfig  MasterConfigInput `json:"master_config,omitempty"`
 }
 
 // HostConfigFromYAML returns a HostConfig from yaml
@@ -82,7 +82,7 @@ func HostConfigFromYAMLFile(filename string) (*HostConfigInput, error) {
 }
 
 // HostConfigToModel converts HostConfigInput to the Model
-func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, error) {
+func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, *MasterConfigModel, error) {
 	//model := HostConfigModel(*hc)
 	model := HostConfigModel{
 		NodeID:    hc.NodeID,
@@ -106,5 +106,9 @@ func HostConfigToModel(hc *HostConfigInput) (*HostConfigModel, error) {
 		GRPCAddress:    hc.IPAddress + ":" + strconv.Itoa(hc.GRPCPort),
 		SFTPAddress:    hc.IPAddress + ":" + strconv.Itoa(hc.SFTPPort),
 	}
-	return &model, nil
+	masterConfig := MasterConfigModel{
+		Master:  hc.MasterConfig.Master,
+		Address: hc.MasterConfig.MasterIP + ":" + strconv.Itoa(hc.MasterConfig.MasterPort),
+	}
+	return &model, &masterConfig, nil
 }

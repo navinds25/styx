@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -139,11 +141,11 @@ var fileDescriptor_2d065b70573ae483 = []byte{
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // ExtensionServiceClient is the client API for ExtensionService service.
 //
@@ -153,10 +155,10 @@ type ExtensionServiceClient interface {
 }
 
 type extensionServiceClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewExtensionServiceClient(cc *grpc.ClientConn) ExtensionServiceClient {
+func NewExtensionServiceClient(cc grpc.ClientConnInterface) ExtensionServiceClient {
 	return &extensionServiceClient{cc}
 }
 
@@ -172,6 +174,14 @@ func (c *extensionServiceClient) ExecuteExtension(ctx context.Context, in *Execu
 // ExtensionServiceServer is the server API for ExtensionService service.
 type ExtensionServiceServer interface {
 	ExecuteExtension(context.Context, *ExecuteExtensionParams) (*ExecuteExtensionOutput, error)
+}
+
+// UnimplementedExtensionServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedExtensionServiceServer struct {
+}
+
+func (*UnimplementedExtensionServiceServer) ExecuteExtension(ctx context.Context, req *ExecuteExtensionParams) (*ExecuteExtensionOutput, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExecuteExtension not implemented")
 }
 
 func RegisterExtensionServiceServer(s *grpc.Server, srv ExtensionServiceServer) {

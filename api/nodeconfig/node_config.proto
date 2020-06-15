@@ -7,7 +7,8 @@ import "node_config_events.proto";
 
 service NodeConfigService {
     rpc AddNodeConfig(NodeConfig) returns(AddNodeConfigResponse);
-    rpc GetNodeConfigByID(NodeID) returns(NodeConfig);
-    rpc ListNodeConfig(ListNodeConfigRequest) returns(AllNodeConfig);
+    rpc GetNodeConfigByID(GetNodeRequest) returns(NodeConfig);
+    rpc ListNodeConfig(NodeConfigRequest) returns(AllNodeConfig);
+    rpc UpdateAllNodeConfig(NodeConfigRequest) returns(AllNodeConfig);
     rpc AddNode(NodeConfig) returns (AllNodeConfig);
 }

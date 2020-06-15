@@ -12,6 +12,6 @@ host_config:
   sftp_auth:
     hostkey_file: host_key #need to fix this field
   external_access: false
-master_config:
-  master_ip: 192.168.28.13
-  grpc_port: 28888
+  master_config:
+    master_ip: 192.168.28.13
+    master_port: 28888

@@ -68,7 +68,7 @@ func (badgerDB BadgerDB) AddHostConfigEntry(id string, inModel *HostConfigModel)
 }
 
 // GetHostConfigEntry gets HostConfigModel by id
-// Returns entry, exists bool and error
+// Returns entry and error
 func (badgerDB BadgerDB) GetHostConfigEntry(id string) (*HostConfigModel, error) {
 	txn := badgerDB.NodeConfigDB.NewTransaction(false)
 	defer txn.Discard()
