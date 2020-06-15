@@ -57,11 +57,20 @@ message AddNodeConfigResponse {
     NodeEntryStatus node_entry_status = 3;
 }
 
-message NodeID {
+message GetNodeRequest {
     string node_id = 1;
+    enum NodeType {
+        NODETYPE_UNSPECIFIED = 0;
+        NODETYPE_MASTER = 1;
+        NODETYPE_NODE = 2;
+        NODETYPE_EXTERNAL = 3;
+    }
+    NodeType nodetype = 2;
 }
 
-message ListNodeConfigRequest {}
+message NodeConfigRequest {
+    string prefix = 1;
+}
 
 message AllNodeConfig {
     repeated NodeConfig all_node_config = 1;

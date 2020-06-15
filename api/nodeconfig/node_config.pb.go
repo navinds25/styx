@@ -8,6 +8,8 @@ import (
 	fmt "fmt"
 	proto "github.com/golang/protobuf/proto"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	math "math"
 )
 
@@ -25,44 +27,46 @@ const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 func init() { proto.RegisterFile("node_config.proto", fileDescriptor_3d655ee89acbd2d0) }
 
 var fileDescriptor_3d655ee89acbd2d0 = []byte{
-	// 188 bytes of a gzipped FileDescriptorProto
+	// 201 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xcc, 0xcb, 0x4f, 0x49,
 	0x8d, 0x4f, 0xce, 0xcf, 0x4b, 0xcb, 0x4c, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x02,
 	0x09, 0x41, 0x44, 0xa4, 0x24, 0x90, 0xa4, 0xe3, 0x53, 0xcb, 0x52, 0xf3, 0x4a, 0x8a, 0x21, 0xaa,
-	0x8c, 0xd6, 0x31, 0x71, 0x09, 0xfa, 0xe5, 0xa7, 0xa4, 0x3a, 0x83, 0xe5, 0x82, 0x53, 0x8b, 0xca,
-	0x32, 0x93, 0x53, 0x85, 0xbc, 0xb8, 0x78, 0x1d, 0x53, 0x52, 0x10, 0xe2, 0x42, 0x62, 0x7a, 0x08,
-	0xd3, 0xf4, 0x10, 0xe2, 0x52, 0x8a, 0xc8, 0xe2, 0x28, 0x5a, 0x82, 0x52, 0x8b, 0x0b, 0xf2, 0xf3,
-	0x8a, 0x53, 0x85, 0xec, 0xb9, 0x04, 0xdd, 0x53, 0x4b, 0x10, 0x12, 0x4e, 0x95, 0x9e, 0x2e, 0x42,
-	0x42, 0xe8, 0xe6, 0x79, 0xba, 0x48, 0xe1, 0xb0, 0x43, 0xc8, 0x8f, 0x8b, 0xcf, 0x27, 0xb3, 0x18,
-	0xc9, 0x04, 0x21, 0x14, 0x5b, 0x51, 0xe5, 0x82, 0x52, 0x0b, 0x4b, 0x53, 0x8b, 0x4b, 0xa4, 0x24,
-	0x51, 0x1c, 0x96, 0x93, 0x83, 0xa4, 0xdb, 0x86, 0x8b, 0x1d, 0xea, 0x52, 0x9c, 0xde, 0xc2, 0xad,
-	0xdb, 0x89, 0x2f, 0x8a, 0x47, 0xcf, 0x1a, 0x21, 0x9b, 0xc4, 0x06, 0x0e, 0x47, 0x63, 0x40, 0x00,
-	0x00, 0x00, 0xff, 0xff, 0xa1, 0x69, 0xa2, 0xe7, 0x82, 0x01, 0x00, 0x00,
+	0x8c, 0x9a, 0x99, 0xb9, 0x04, 0xfd, 0xf2, 0x53, 0x52, 0x9d, 0xc1, 0x72, 0xc1, 0xa9, 0x45, 0x65,
+	0x99, 0xc9, 0xa9, 0x42, 0x5e, 0x5c, 0xbc, 0x8e, 0x29, 0x29, 0x08, 0x71, 0x21, 0x31, 0x3d, 0x84,
+	0x69, 0x7a, 0x08, 0x71, 0x29, 0x45, 0x64, 0x71, 0x14, 0x2d, 0x41, 0xa9, 0xc5, 0x05, 0xf9, 0x79,
+	0xc5, 0xa9, 0x42, 0xee, 0x5c, 0x82, 0xee, 0xa9, 0x25, 0x08, 0x09, 0xa7, 0x4a, 0x4f, 0x17, 0x21,
+	0x29, 0x64, 0x7d, 0x50, 0xe9, 0xa0, 0xd4, 0xc2, 0xd2, 0xd4, 0xe2, 0x12, 0x29, 0x1c, 0x76, 0x09,
+	0x79, 0x71, 0xf1, 0xf9, 0x64, 0x16, 0x23, 0x99, 0x24, 0x24, 0x8b, 0x5d, 0x25, 0xcc, 0x20, 0x49,
+	0x14, 0xc7, 0xe5, 0xe4, 0x20, 0xe9, 0xf4, 0xe7, 0x12, 0x0e, 0x2d, 0x48, 0x49, 0x2c, 0x49, 0x45,
+	0x15, 0x26, 0xdf, 0x40, 0x1b, 0x2e, 0x76, 0xa8, 0xf7, 0x71, 0x86, 0x15, 0x6e, 0xdd, 0x4e, 0x7c,
+	0x51, 0x3c, 0x7a, 0xd6, 0x08, 0xd9, 0x24, 0x36, 0x70, 0xe4, 0x18, 0x03, 0x02, 0x00, 0x00, 0xff,
+	0xff, 0x35, 0xbf, 0x7e, 0x7c, 0xd7, 0x01, 0x00, 0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
 var _ context.Context
-var _ grpc.ClientConn
+var _ grpc.ClientConnInterface
 
 // This is a compile-time assertion to ensure that this generated file
 // is compatible with the grpc package it is being compiled against.
-const _ = grpc.SupportPackageIsVersion4
+const _ = grpc.SupportPackageIsVersion6
 
 // NodeConfigServiceClient is the client API for NodeConfigService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type NodeConfigServiceClient interface {
 	AddNodeConfig(ctx context.Context, in *NodeConfig, opts ...grpc.CallOption) (*AddNodeConfigResponse, error)
-	GetNodeConfigByID(ctx context.Context, in *NodeID, opts ...grpc.CallOption) (*NodeConfig, error)
-	ListNodeConfig(ctx context.Context, in *ListNodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error)
+	GetNodeConfigByID(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*NodeConfig, error)
+	ListNodeConfig(ctx context.Context, in *NodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error)
+	UpdateAllNodeConfig(ctx context.Context, in *NodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error)
 	AddNode(ctx context.Context, in *NodeConfig, opts ...grpc.CallOption) (*AllNodeConfig, error)
 }
 
 type nodeConfigServiceClient struct {
-	cc *grpc.ClientConn
+	cc grpc.ClientConnInterface
 }
 
-func NewNodeConfigServiceClient(cc *grpc.ClientConn) NodeConfigServiceClient {
+func NewNodeConfigServiceClient(cc grpc.ClientConnInterface) NodeConfigServiceClient {
 	return &nodeConfigServiceClient{cc}
 }
 
@@ -75,7 +79,7 @@ func (c *nodeConfigServiceClient) AddNodeConfig(ctx context.Context, in *NodeCon
 	return out, nil
 }
 
-func (c *nodeConfigServiceClient) GetNodeConfigByID(ctx context.Context, in *NodeID, opts ...grpc.CallOption) (*NodeConfig, error) {
+func (c *nodeConfigServiceClient) GetNodeConfigByID(ctx context.Context, in *GetNodeRequest, opts ...grpc.CallOption) (*NodeConfig, error) {
 	out := new(NodeConfig)
 	err := c.cc.Invoke(ctx, "/nodeconfig.NodeConfigService/GetNodeConfigByID", in, out, opts...)
 	if err != nil {
@@ -84,9 +88,18 @@ func (c *nodeConfigServiceClient) GetNodeConfigByID(ctx context.Context, in *Nod
 	return out, nil
 }
 
-func (c *nodeConfigServiceClient) ListNodeConfig(ctx context.Context, in *ListNodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error) {
+func (c *nodeConfigServiceClient) ListNodeConfig(ctx context.Context, in *NodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error) {
 	out := new(AllNodeConfig)
 	err := c.cc.Invoke(ctx, "/nodeconfig.NodeConfigService/ListNodeConfig", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *nodeConfigServiceClient) UpdateAllNodeConfig(ctx context.Context, in *NodeConfigRequest, opts ...grpc.CallOption) (*AllNodeConfig, error) {
+	out := new(AllNodeConfig)
+	err := c.cc.Invoke(ctx, "/nodeconfig.NodeConfigService/UpdateAllNodeConfig", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -105,9 +118,30 @@ func (c *nodeConfigServiceClient) AddNode(ctx context.Context, in *NodeConfig, o
 // NodeConfigServiceServer is the server API for NodeConfigService service.
 type NodeConfigServiceServer interface {
 	AddNodeConfig(context.Context, *NodeConfig) (*AddNodeConfigResponse, error)
-	GetNodeConfigByID(context.Context, *NodeID) (*NodeConfig, error)
-	ListNodeConfig(context.Context, *ListNodeConfigRequest) (*AllNodeConfig, error)
+	GetNodeConfigByID(context.Context, *GetNodeRequest) (*NodeConfig, error)
+	ListNodeConfig(context.Context, *NodeConfigRequest) (*AllNodeConfig, error)
+	UpdateAllNodeConfig(context.Context, *NodeConfigRequest) (*AllNodeConfig, error)
 	AddNode(context.Context, *NodeConfig) (*AllNodeConfig, error)
+}
+
+// UnimplementedNodeConfigServiceServer can be embedded to have forward compatible implementations.
+type UnimplementedNodeConfigServiceServer struct {
+}
+
+func (*UnimplementedNodeConfigServiceServer) AddNodeConfig(ctx context.Context, req *NodeConfig) (*AddNodeConfigResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNodeConfig not implemented")
+}
+func (*UnimplementedNodeConfigServiceServer) GetNodeConfigByID(ctx context.Context, req *GetNodeRequest) (*NodeConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNodeConfigByID not implemented")
+}
+func (*UnimplementedNodeConfigServiceServer) ListNodeConfig(ctx context.Context, req *NodeConfigRequest) (*AllNodeConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListNodeConfig not implemented")
+}
+func (*UnimplementedNodeConfigServiceServer) UpdateAllNodeConfig(ctx context.Context, req *NodeConfigRequest) (*AllNodeConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateAllNodeConfig not implemented")
+}
+func (*UnimplementedNodeConfigServiceServer) AddNode(ctx context.Context, req *NodeConfig) (*AllNodeConfig, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNode not implemented")
 }
 
 func RegisterNodeConfigServiceServer(s *grpc.Server, srv NodeConfigServiceServer) {
@@ -133,7 +167,7 @@ func _NodeConfigService_AddNodeConfig_Handler(srv interface{}, ctx context.Conte
 }
 
 func _NodeConfigService_GetNodeConfigByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(NodeID)
+	in := new(GetNodeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -145,13 +179,13 @@ func _NodeConfigService_GetNodeConfigByID_Handler(srv interface{}, ctx context.C
 		FullMethod: "/nodeconfig.NodeConfigService/GetNodeConfigByID",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NodeConfigServiceServer).GetNodeConfigByID(ctx, req.(*NodeID))
+		return srv.(NodeConfigServiceServer).GetNodeConfigByID(ctx, req.(*GetNodeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _NodeConfigService_ListNodeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListNodeConfigRequest)
+	in := new(NodeConfigRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -163,7 +197,25 @@ func _NodeConfigService_ListNodeConfig_Handler(srv interface{}, ctx context.Cont
 		FullMethod: "/nodeconfig.NodeConfigService/ListNodeConfig",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NodeConfigServiceServer).ListNodeConfig(ctx, req.(*ListNodeConfigRequest))
+		return srv.(NodeConfigServiceServer).ListNodeConfig(ctx, req.(*NodeConfigRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NodeConfigService_UpdateAllNodeConfig_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NodeConfigRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NodeConfigServiceServer).UpdateAllNodeConfig(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/nodeconfig.NodeConfigService/UpdateAllNodeConfig",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NodeConfigServiceServer).UpdateAllNodeConfig(ctx, req.(*NodeConfigRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -201,6 +253,10 @@ var _NodeConfigService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListNodeConfig",
 			Handler:    _NodeConfigService_ListNodeConfig_Handler,
+		},
+		{
+			MethodName: "UpdateAllNodeConfig",
+			Handler:    _NodeConfigService_UpdateAllNodeConfig_Handler,
 		},
 		{
 			MethodName: "AddNode",

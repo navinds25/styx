@@ -1,6 +1,9 @@
 package nodeconfig
 
-import "github.com/dgraph-io/badger/v2"
+import (
+	"github.com/dgraph-io/badger/v2"
+	pb "github.com/navinds25/styx/api/nodeconfig"
+)
 
 // BadgerDB is the DB instance for BadgerDB
 type BadgerDB struct {
@@ -19,6 +22,11 @@ var Data DataStore
 type Store interface {
 	AddHostConfigEntry(string, *HostConfigModel) error
 	GetHostConfigEntry(string) (*HostConfigModel, error)
+	AddMasterConfigEntry(*MasterConfigModel) error
+	GetMasterConfigEntry() (*MasterConfigModel, error)
+	AddNodeConfigEntry(string, *pb.NodeConfig) error
+	GetNodeConfigEntry(string) (*pb.NodeConfig, error)
+	GetAllNodeConfigEntries(string) ([]*pb.NodeConfig, error)
 	CloseDB() error
 }
 

@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package extension;
+option go_package = ".;extension";
+
+service ExtensionService{
+    rpc ExecuteExtension(ExecuteExtensionParams) returns(ExecuteExtensionOutput);
+}
+
+message ExecuteExtensionParams {
+    string name = 1;
+    map<string, string> arguments = 2;
+}
+
+message ExecuteExtensionOutput {
+    map<string, string> output = 1;
+}

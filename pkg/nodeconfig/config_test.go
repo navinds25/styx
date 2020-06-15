@@ -35,7 +35,7 @@ host_config:
 
 master_config:
   master_ip: 127.0.0.1
-  grpc_port: 28888
+  master_port: 28888
 `)),
 	}
 	positive_want := &nodeconfig.ConfigInput{
@@ -52,7 +52,7 @@ master_config:
 			ExternalAccess: true,
 		},
 		MasterConfig: &nodeconfig.MasterConfigInput{
-			MasterIP: "127.0.0.1", GRPCPort: 28888,
+			MasterIP: "127.0.0.1", MasterPort: 28888,
 		},
 	}
 	positive := test{

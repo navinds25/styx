@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"strconv"
 
 	badger "github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/internal/app"
@@ -27,7 +26,8 @@ func nodeConfigDB(dataRoot string) error {
 		log.Error("Invalid encryption key", err)
 		return err
 	}
-	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithEncryptionKey(encryptionKey).WithLogger(nil)
+	// WithTruncate is needed for windows
+	dbOpts := badger.DefaultOptions(nodeConfigDBPath).WithTruncate(true).WithEncryptionKey(encryptionKey).WithLogger(nil)
 	nodeConfigDB, err := badger.Open(dbOpts)
 	if err != nil {
 		return err
@@ -77,7 +77,7 @@ func overwriteFromCli(cliHC *nodeconfig.HostConfigInput) (*nodeconfig.HostConfig
 	if cliHC == nil {
 		return nil, errors.New("config didn't have any value")
 	}
-	hcM, err := nodeconfig.HostConfigToModel(cliHC)
+	hcM, masterModel, err := nodeconfig.HostConfigToModel(cliHC)
 	if err != nil {
 		log.Debug("conversion of cli input to hostconfig model failed with ", err)
 		return nil, err
@@ -86,7 +86,11 @@ func overwriteFromCli(cliHC *nodeconfig.HostConfigInput) (*nodeconfig.HostConfig
 		log.Debug("failed to add hostconfig entry to database ", err)
 		return nil, err
 	}
-	log.Debug("added entry")
+	log.Debug("added entry for hostconfig")
+	if err := nodeconfig.Data.NodeConfig.AddMasterConfigEntry(masterModel); err != nil {
+		log.Debug("failed to add entry for master config")
+		return nil, err
+	}
 	dHcM, err := nodeconfig.Data.NodeConfig.GetHostConfigEntry(nodeconfig.HostConfigKey)
 	if err != nil {
 		log.Debug("failed to get hostconfig entry from database ", err)
@@ -96,9 +100,10 @@ func overwriteFromCli(cliHC *nodeconfig.HostConfigInput) (*nodeconfig.HostConfig
 	return dHcM, nil
 }
 
-func addNode(mc *nodeconfig.MasterConfigInput, certFile string) error {
-	if mc.MasterAddress == "" && mc.MasterIP != "" {
-		mc.MasterAddress = mc.MasterIP + ":" + strconv.Itoa(mc.GRPCPort)
+func addNode(certFile string) error {
+	mc, err := nodeconfig.Data.NodeConfig.GetMasterConfigEntry()
+	if err != nil {
+		return err
 	}
 	certPool := x509.NewCertPool()
 	certFD, err := os.Open(certFile)
@@ -116,7 +121,7 @@ func addNode(mc *nodeconfig.MasterConfigInput, certFile string) error {
 		log.Error("certificate pool could not be updated")
 		return err
 	}
-	conn, err := grpc.Dial(mc.MasterAddress, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(certPool, "")))
+	conn, err := grpc.Dial(mc.Address, grpc.WithTransportCredentials(credentials.NewClientTLSFromCert(certPool, "")))
 	if err != nil {
 		log.Error("could not send request to master")
 		return err
@@ -153,7 +158,7 @@ func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
 		return nil, err
 	}
 	log.Debugf("got hostconfig from db/overwrite: %v", hcM)
-	if err := addNode(config.MasterConfig, hcM.GRPCAuth.TLSCertFile); err != nil {
+	if err := addNode(hcM.GRPCAuth.TLSCertFile); err != nil {
 		log.Error("error adding node to cluster", err)
 		//return nil, err
 	}
