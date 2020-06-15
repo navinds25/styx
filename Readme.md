@@ -1,6 +1,6 @@
 # STYX:
 
-/travis/:user/:repo/:branch
+[![Build Status](https://img.shields.io/travis/navinds25/styx)](https://travis-ci.org/navinds25/styx)
 
 ## Build Steps
 
