@@ -1,8 +1,13 @@
 # STYX:
 
+/travis/:user/:repo/:branch
+
 ## Build Steps
 
 Currently building only works on linux. Steps are as follows:
+
+To generate protobuf files:
+``` make proto ```
 
 To build binaries:
 ``` make build ```
@@ -14,4 +19,5 @@ To create certificates for testing:
 
 To Test locally with docker:
 ``` make local-docker ```
+
 make build and make certs will have to be run before make local-docker.
