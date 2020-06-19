@@ -1,6 +1,8 @@
 package setup
 
 import (
+	indesignpb "github.com/navinds25/EviveInDesignServer/api/indesign"
+	indesign "github.com/navinds25/EviveInDesignServer/pkg/indesign"
 	ftpb "github.com/navinds25/styx/api/filetransfer"
 	ncpb "github.com/navinds25/styx/api/nodeconfig"
 	"github.com/navinds25/styx/pkg/filetransfer"
@@ -20,5 +22,6 @@ func RegisterGRPCServices(grpcAuth *nodeconfig.GRPCAuthModel) (*grpc.Server, err
 	ftpb.RegisterFTServiceServer(s, &filetransfer.FTServer{})
 	ftpb.RegisterRemoteFTServiceServer(s, &filetransfer.RemoteFTServer{})
 	// external grpc services:
+	indesignpb.RegisterInDesignServiceServer(s, &indesign.Server{})
 	return s, nil
 }
