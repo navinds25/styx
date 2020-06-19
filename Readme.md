@@ -35,4 +35,5 @@ this requires cfssl to be installed, https://github.com/cloudflare/cfssl
 make build and make certs will have to be run before make local-docker
 
 ## Adding Private Dependencies
-git config --global url."https://${GITHUB_TOKEN}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+
+https://goproxy.io/docs/goproxyio-private.html
