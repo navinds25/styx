@@ -127,23 +127,3 @@ func updateHostConfig() (*nodeconfig.HostConfigModel, error) {
 	}
 	return hcM, nil
 }
-
-// NodeSetup is the main setup function
-func NodeSetup() (*nodeconfig.HostConfigModel, error) {
-	// read cli flags
-	if err := app.MainFlagVal.CliSetDefaults(); err != nil {
-		return nil, err
-	}
-	// setup dbs
-	if err := DBsetup(app.MainFlagVal.DataDir); err != nil {
-		return nil, err
-	}
-	log.Debug("completed the db setup")
-	// get the hostconfig
-	hcM, err := updateHostConfig()
-	if err != nil {
-		log.Error("error updating hostconfig: ", err)
-		return nil, err
-	}
-	return hcM, nil
-}

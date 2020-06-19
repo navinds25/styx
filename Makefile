@@ -18,6 +18,10 @@ build:
 local-docker:
 	cd build && ./build_docker.sh
 
+.PHONY: s3
+s3:
+	s3upload evive-indesign pkg bin/styxnode.exe
+
 .PHONY: proto
 proto:
 	@for pb in $(shell ls ${PBDIR}); do \

@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"log"
+	"os"
 	"time"
 
 	"google.golang.org/grpc"
@@ -42,18 +43,13 @@ func main() {
 	defer conn.Close()
 	c := executepb.NewExecuteServiceClient(conn)
 	argInDesign := &executepb.Executable{
-		Command:   "C:\\Program Files\\Adobe\\Adobe InDesign Server 2020\\InDesignServer.exe",
+		Command:   os.Args[1],
 		Arguments: []string{"-port", "10001"},
 	}
 	log.Println(argInDesign)
-	echoArg := &executepb.Executable{
-		Command:   "cmd",
-		Arguments: []string{"/C", "C:\\Program Files\\Adobe\\Adobe InDesign Server 2020\\InDesignServer.exe", "-port", "10001"},
-	}
-	log.Println(echoArg)
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	output, err := c.Run(ctx, echoArg)
+	output, err := c.Run(ctx, argInDesign)
 	if err != nil {
 		log.Fatal(err)
 	}

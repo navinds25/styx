@@ -52,6 +52,7 @@ func InitFTDB(s FTStore) {
 	Data.FileTransfer = s
 }
 
+// CloseFTDB closes the FileTransfer Database
 func (badgerDB BadgerDB) CloseFTDB() error {
 	if err := badgerDB.FileTransferDB.Close(); err != nil {
 		return err
