@@ -33,7 +33,7 @@ func checkCondition(conditionList []*pb.Condition, stat os.FileInfo) bool {
 	for i := range conditionList {
 		c := conditionList[i]
 		switch c.GetConditionType() {
-		case pb.Condition_TimeRange:
+		case pb.Condition_TIME_RANGE:
 			trcondition := func(c *pb.Condition, stat os.FileInfo) bool {
 				modTime := stat.ModTime().Unix()
 				startTime := c.GetTimeValues().GetTimeStart()
@@ -44,7 +44,7 @@ func checkCondition(conditionList []*pb.Condition, stat os.FileInfo) bool {
 				return false
 			}
 			state = state && trcondition(c, stat)
-		case pb.Condition_Time:
+		case pb.Condition_TIME:
 			tcondition := func(c *pb.Condition, stat os.FileInfo) bool {
 				modTime := stat.ModTime().Unix()
 				startTime := c.GetTimeValues().GetTimeStart()
@@ -54,12 +54,12 @@ func checkCondition(conditionList []*pb.Condition, stat os.FileInfo) bool {
 				return false
 			}
 			state = state && tcondition(c, stat)
-		case pb.Condition_Glob:
+		case pb.Condition_GLOB:
 			gcondition := func(c *pb.Condition, stat os.FileInfo) bool {
 				return false
 			}
 			state = state && gcondition(c, stat)
-		case pb.Condition_Regex:
+		case pb.Condition_REGEX:
 			rcondition := func(c *pb.Condition, stat os.FileInfo) bool {
 				return false
 			}

@@ -9,7 +9,15 @@ This is saved in the config database as hostconfig:key_name and value.
 
 NodeConfig handles the configuration of the styxnode for the peer to peer communication.
 
-styxnode -config hostconfig 1.req [ (self) nodeconfig -grpc-> styxnode ] response [ all nodeconfig <- styxnode]
-----
-server a
+### Node/Peer Configuration:
 
+* NodeID
+- External - bool
+- IPAddress/DomainName
+- GRPC Port
+- SFTP Port
+- GRPC TLS Key
+- GRPC TLS Cert
+- GRPC Authentication ?
+- SFTP Username
+- SFTP Password

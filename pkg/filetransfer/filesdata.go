@@ -3,7 +3,6 @@ package filetransfer
 import (
 	"bytes"
 	"encoding/gob"
-	"os"
 	"strings"
 
 	"github.com/dgraph-io/badger/v2"
@@ -11,20 +10,6 @@ import (
 
 	log "github.com/sirupsen/logrus"
 )
-
-// InitFilesDB Initializes the Database
-func InitFilesDB(s FilesStore) {
-	Data.Files = s
-}
-
-// FilesStore is the main interface for the backend
-type FilesStore interface {
-	CheckFileExists([]byte) (bool, error)
-	AddFile(string, *sftp.TransferConfig) error
-	GetFile() error
-	DeleteFile(string) error
-	CloseFilesDB() error
-}
 
 // CheckFileExists checks if a file exists in the database.
 func (badgerDB BadgerDB) CheckFileExists(key []byte) (bool, error) {
@@ -93,14 +78,5 @@ func (badgerDB BadgerDB) ListFiles() error {
 	if err != nil {
 		return err
 	}
-	return nil
-}
-
-func createDataDir(datadir string) error {
-	log.Debug("datadir:", datadir)
-	if err := os.MkdirAll(datadir, 0755); err != nil {
-		return err
-	}
-	log.Debug("created data directory: ", datadir)
 	return nil
 }

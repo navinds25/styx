@@ -10,10 +10,11 @@ import (
 
 // CommandRequest is for type request in the queue
 type CommandRequest struct {
+	ID        string
 	Command   string
 	Arguments []string
-	Instance  int64
-	Port      int64
+	Instance  int
+	Port      int
 }
 
 // CommandQueue is the queue for the Command instances
@@ -21,7 +22,7 @@ var CommandQueue = make(chan CommandRequest)
 
 // CommandQuitRequest is for stopping a Command Instance
 type CommandQuitRequest struct {
-	Instance int64
+	ID string
 }
 
 // CommandQuitChannel closes all the commands
@@ -64,7 +65,7 @@ func SubscribeCmdAsyncParallel() {
 				wg.Add(1)
 				go func() {
 					for scanner.Scan() {
-						log.WithField("instance", cmdInst.Instance).WithField("port", cmdInst.Port).Println(scanner.Text())
+						log.WithField("instance", cmdInst.Instance).WithField("port", cmdInst.Port).Info(scanner.Text())
 					}
 					defer wg.Done()
 				}()
@@ -73,10 +74,11 @@ func SubscribeCmdAsyncParallel() {
 					log.Error("Error waiting for program to complete: ", err)
 				}
 			case cmdQuitChan := <-CommandQuitChannel:
-				if cmdQuitChan.Instance == cmdInst.Instance {
+				if cmdQuitChan.ID == cmdInst.ID {
 					if err := program.Process.Kill(); err != nil {
 						log.Error("Error killing program: ", err)
 					}
+					log.Infof("Killed Command ID %s on request", cmdInst.ID)
 				}
 			}
 		}
