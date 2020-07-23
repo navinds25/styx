@@ -10,7 +10,7 @@ require (
 	github.com/google/go-cmp v0.4.0
 	github.com/kr/fs v0.1.0
 	github.com/kr/text v0.2.0 // indirect
-	github.com/navinds25/EviveInDesignServer v0.0.0-20200619021432-f3dfcc9f0eb9
+	github.com/navinds25/EviveInDesignServer v0.0.0-20200723083547-1867db568298
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pkg/sftp v1.11.0

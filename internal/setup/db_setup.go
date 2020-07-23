@@ -8,6 +8,7 @@ import (
 	badger "github.com/dgraph-io/badger/v2"
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/pkg/filetransfer"
+	"github.com/navinds25/EviveInDesignServer/pkg/indesign"
 	"github.com/navinds25/styx/pkg/nodeconfig"
 	log "github.com/sirupsen/logrus"
 )
@@ -69,6 +70,10 @@ func DBsetup(dataRoot string) error {
 		return err
 	}
 	if err := filetransferDB(dataRoot); err != nil {
+		return err
+	}
+	// extension databases
+	if err := indesign.InitializeInDesignDB(dataRoot); err != nil {
 		return err
 	}
 	return nil

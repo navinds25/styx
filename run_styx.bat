@@ -1,0 +1,1 @@
+styxnode.exe --config config.yml --overwrite-hostconfig --debug

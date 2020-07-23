@@ -4,6 +4,7 @@ import (
 	"net"
 	"os"
 
+	"github.com/navinds25/EviveInDesignServer/pkg/indesign"
 	"github.com/navinds25/styx/internal/app"
 	"github.com/navinds25/styx/internal/setup"
 	"github.com/navinds25/styx/pkg/nodeconfig"
@@ -28,6 +29,7 @@ func main() {
 	log.Debug("grpcAddress: ", hcM.GRPCAddress)
 	log.Debug("sftpAddress: ", hcM.SFTPAddress)
 	defer nodeconfig.Data.NodeConfig.CloseDB()
+	defer indesign.Data.InDesign.Close()
 	grpcListener, err := net.Listen("tcp", hcM.GRPCAddress)
 	if err != nil {
 		log.Fatal(err)
